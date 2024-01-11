@@ -14,7 +14,7 @@ class Game:
             self.player_list = []
             shuff_id_list = list(self.id_list)
             random.shuffle(shuff_id_list)
-            
+
             role_class = {
                 "werewolf": Werewolf,
                 "villager": Villager,
@@ -30,7 +30,29 @@ class Game:
             self.player_list.append(player)
             
     def turn(self):
-        pass
+        self.turn_count += 1
+
+
+
+        def night_turn(self):
+        for player in self.player_list:
+            if player in night_action_list:
+                player.action_night()
+        
+        def dawn_turn(self):
+        for player in self.player_list:
+            if player in dawn_action_list:
+                player.action_dawn()
+
+        def day_turn(self):
+        for player in self.player_list:
+            if player in day_action_list:
+                player.action_day()
+
+        def twilight_turn(self):
+        for player in self.player_list:
+            if player in twilight_action_list:
+                player.action_twilight()
 
     def end(self):
         pass

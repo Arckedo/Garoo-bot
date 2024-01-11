@@ -1,3 +1,4 @@
+
 class _Player:
     def __init__(self, id, state):
         self.id = id
@@ -39,3 +40,9 @@ class Thief(_Role):
         super().__init__(id, state, role="thief")
 
 #endregion
+
+
+night_action_list = [Werewolf, Seer, Witch, Thief]
+dawn_action_list = [Hunter]
+day_action_list = []
+twilight_action_list = []
