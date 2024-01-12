@@ -36,33 +36,52 @@ class Game:
     def _turn(self):
 
         def night_turn(self):
+
+            #INTERACTION A REMPLACER (Front)
             print("-----------------Nuit {}-------------------".format(self.turn_count))
+            #--------------------------
+
             for player in self.player_list:
                 if type(player) in night_action_list:
                     player.night_action()
             
         def dawn_turn(self):
+
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("-----------------Aube {}-------------------".format(self.turn_count))
             print()
+            #--------------------------
+
             for player in self.player_list:
                 if type(player) in dawn_action_list:
                     player.dawn_action()
 
         def day_turn(self):
+
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("-----------------Jour {}-------------------".format(self.turn_count))
             for player in self.player_list:
                 if player.is_alive:
                     print(input(f"Qui veut tu voter ? joueur {player.id}\nRéponse:"))
             print()
+            #--------------------------
 
+        
             for player in self.player_list:
                 if type(player) in day_action_list:
                     player.day_action()
             
 
         def twilight_turn(self):
+
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("-----------------Crépuscule {}-------------------".format(self.turn_count))
             print()
+            #--------------------------
+
             for player in self.player_list:
                 if type(player) in twilight_action_list:
                     player.twilight_action()
@@ -70,11 +89,16 @@ class Game:
 
 
         if self.turn_count == 0:
+
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("-----------------Jour 0-------------------")
             print("Le jeu commence !")
             print("Elisez le nouveau maire !")
+            #--------------------------
+            
             twilight_turn(self)
-
+        
         self.turn_count += 1
 
 
