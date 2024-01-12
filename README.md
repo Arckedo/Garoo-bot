@@ -11,3 +11,7 @@ Le jeu peut être structurer en 3 parties:
 
 Voici la structure du côté Pure-Jeu:
 ![](images/game_structure.jpg)
+
+# Specs
+- Python 3.11.7
+- Pycord 2.4
