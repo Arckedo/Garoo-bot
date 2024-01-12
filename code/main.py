@@ -53,12 +53,18 @@ class Game:
         if winner == None:
             return False
         elif winner == "werewolf":
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("La partie est terminé !")
             print("Les loups ont gagnés !")
+            #--------------------------
             return True
         elif winner == "villager":
+            #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("La partie est terminé !")
             print("Les villageois ont gagnés !")
+            #--------------------------
             return True
 
 
@@ -72,6 +78,7 @@ class Game:
         def night_turn(self):
 
             #INTERACTION A REMPLACER (Front)
+            #--------------------------
             print("-----------------Nuit {}-------------------".format(self.turn_count))
             #--------------------------
 
@@ -140,6 +147,8 @@ class Game:
         dawn_turn(self)
         day_turn(self)
         twilight_turn(self)
+
+        self._turn()
 
 
 if __name__ == "__main__":
