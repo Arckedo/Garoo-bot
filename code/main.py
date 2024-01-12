@@ -1,11 +1,11 @@
 import random
-from roles import *
+from role import *
 
 class Game:
     def __init__(self, id_list: list,role_list:list,turn_count:int, player_list:list = None):
         self.id_list = id_list
         self.player_list = player_list
-        self.role_list = role_list
+        self.role_list = sorted(role_list,key=role_order_sort) #Trier les roles pour les mettre dans l'ordre
         self.turn_count = turn_count
 
     def start(self):
@@ -26,33 +26,34 @@ class Game:
 
         for player_id, role in zip(shuff_id_list, self.role_list):
             player_class = role_class[role]
-            player = player_class(id = player_id, state = "alive")
+            player = player_class(id = player_id, is_alive = "alive")
             self.player_list.append(player)
-            
+
+
+
+
     def turn(self):
         self.turn_count += 1
 
-
-
         def night_turn(self):
-        for player in self.player_list:
-            if player in night_action_list:
-                player.action_night()
-        
+            for player in self.player_list:
+                if player in night_action_list:
+                    player.action_night()
+            
         def dawn_turn(self):
-        for player in self.player_list:
-            if player in dawn_action_list:
-                player.action_dawn()
+            for player in self.player_list:
+                if player in dawn_action_list:
+                    player.action_dawn()
 
         def day_turn(self):
-        for player in self.player_list:
-            if player in day_action_list:
-                player.action_day()
+            for player in self.player_list:
+                if player in day_action_list:
+                    player.action_day()
 
         def twilight_turn(self):
-        for player in self.player_list:
-            if player in twilight_action_list:
-                player.action_twilight()
+            for player in self.player_list:
+                if player in twilight_action_list:
+                    player.action_twilight()
 
     def end(self):
         pass
@@ -66,7 +67,6 @@ if __name__ == "__main__":
     game = Game(id_list, role_list, turn_count=10)
     game.start()
 
-    # Accéder aux joueurs créés
     for player in game.player_list:
         print(f"Player {player.id} with role {player.role}")
 
