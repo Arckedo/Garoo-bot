@@ -27,22 +27,13 @@ class Game:
 
         for player_id, role in zip(shuff_id_list, self.role_list):
             player_class = role_class[role]
-            player = player_class(id = player_id, is_alive = "alive")
+            player = player_class(id = player_id, is_alive = True)
             self.player_list.append(player)
 
 
 
 
     def _turn(self):
-
-        if self.turn_count == 0:
-            print("-----------------Jour 0-------------------")
-            print("Le jeu commence !")
-            print("Elisez le nouveau maire !")
-
-
-        self.turn_count += 1
-
 
         def night_turn(self):
             print("-----------------Nuit {}-------------------".format(self.turn_count))
@@ -52,6 +43,7 @@ class Game:
             
         def dawn_turn(self):
             print("-----------------Aube {}-------------------".format(self.turn_count))
+            print()
             for player in self.player_list:
                 if type(player) in dawn_action_list:
                     player.dawn_action()
@@ -59,15 +51,31 @@ class Game:
         def day_turn(self):
             print("-----------------Jour {}-------------------".format(self.turn_count))
             for player in self.player_list:
+                if player.is_alive:
+                    print(input(f"Qui veut tu voter ? joueur {player.id}\nRéponse:"))
+            print()
+
+            for player in self.player_list:
                 if type(player) in day_action_list:
                     player.day_action()
             
 
         def twilight_turn(self):
             print("-----------------Crépuscule {}-------------------".format(self.turn_count))
+            print()
             for player in self.player_list:
                 if type(player) in twilight_action_list:
                     player.twilight_action()
+
+
+
+        if self.turn_count == 0:
+            print("-----------------Jour 0-------------------")
+            print("Le jeu commence !")
+            print("Elisez le nouveau maire !")
+            twilight_turn(self)
+
+        self.turn_count += 1
 
 
         night_turn(self)
