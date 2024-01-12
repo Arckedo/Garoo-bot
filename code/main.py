@@ -27,34 +27,61 @@ class Game:
 
         for player_id, role in zip(shuff_id_list, self.role_list):
             player_class = role_class[role]
-            player = player_class(id = player_id, is_alive = "alive")
+            player = player_class(id = player_id, is_alive = True)
             self.player_list.append(player)
 
 
 
 
-    def turn(self):
-        self.turn_count += 1
+    def _turn(self):
 
         def night_turn(self):
+            print("-----------------Nuit {}-------------------".format(self.turn_count))
             for player in self.player_list:
-                if player in night_action_list:
-                    player.action_night()
+                if type(player) in night_action_list:
+                    player.night_action()
             
         def dawn_turn(self):
+            print("-----------------Aube {}-------------------".format(self.turn_count))
+            print()
             for player in self.player_list:
-                if player in dawn_action_list:
-                    player.action_dawn()
+                if type(player) in dawn_action_list:
+                    player.dawn_action()
 
         def day_turn(self):
+            print("-----------------Jour {}-------------------".format(self.turn_count))
             for player in self.player_list:
-                if player in day_action_list:
-                    player.action_day()
+                if player.is_alive:
+                    print(input(f"Qui veut tu voter ? joueur {player.id}\nRéponse:"))
+            print()
+
+            for player in self.player_list:
+                if type(player) in day_action_list:
+                    player.day_action()
+            
 
         def twilight_turn(self):
+            print("-----------------Crépuscule {}-------------------".format(self.turn_count))
+            print()
             for player in self.player_list:
-                if player in twilight_action_list:
-                    player.action_twilight()
+                if type(player) in twilight_action_list:
+                    player.twilight_action()
+
+
+
+        if self.turn_count == 0:
+            print("-----------------Jour 0-------------------")
+            print("Le jeu commence !")
+            print("Elisez le nouveau maire !")
+            twilight_turn(self)
+
+        self.turn_count += 1
+
+
+        night_turn(self)
+        dawn_turn(self)
+        day_turn(self)
+        twilight_turn(self)
 
     def end(self):
         pass
@@ -65,18 +92,10 @@ if __name__ == "__main__":
     id_list = [1, 2, 3, 4, 5]
     role_list = ["werewolf", "villager", "seer", "witch", "hunter"]
 
-    game = Game(id_list, role_list, turn_count=10)
+    game = Game(id_list, role_list, turn_count=0)
     game.start()
 
     for player in game.player_list:
         print(f"Player {player.id} with role {player.role}")
-
-
-
-
-
-
-
-
-
-
+    
+    game._turn()
