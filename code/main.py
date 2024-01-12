@@ -5,7 +5,8 @@ class Game:
     def __init__(self, id_list: list,role_list:list,turn_count:int, player_list:list = None):
         self.id_list = id_list
         self.player_list = player_list
-        self.role_list = sorted(role_list,key=role_order_sort) #Trier les roles pour les mettre dans l'ordre
+        #Trier les roles pour les mettre dans l'ordre de passage
+        self.role_list = sorted(role_list,key=role_order_sort) 
         self.turn_count = turn_count
 
     def start(self):
