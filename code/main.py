@@ -10,7 +10,7 @@ class Game:
         self.turn_count = turn_count
 
     def start(self):
-        # Give a class and a Role to each player
+        # Donne une Class et un Role à chaque Joueur
         if self.player_list == None: 
             self.player_list = []
             shuff_id_list = list(self.id_list)
