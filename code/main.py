@@ -30,10 +30,44 @@ class Game:
             player = player_class(id = player_id, is_alive = True)
             self.player_list.append(player)
 
+    def is_game_finish(self):
+        werewolf_count = 0
+        villager_count = 0
+
+        for player in self.player_list:
+            if player.is_alive:
+                if player.side == "werewolf":
+                    werewolf_count += 1
+                elif player.side == "villager":
+                    villager_count += 1
+        #A voir si on garde ca ou si on termine quand tous les villageois sont mort
+        #peut mettre les deux dont un qu'ils choissisent en features au pire
+        if werewolf_count > villager_count:
+            return "werewolf"
+        elif werewolf_count == 0:
+            return "villager"
+        else:
+            return None
+    
+    def end(self, winner):
+        if winner == None:
+            return False
+        elif winner == "werewolf":
+            print("La partie est terminé !")
+            print("Les loups ont gagnés !")
+            return True
+        elif winner == "villager":
+            print("La partie est terminé !")
+            print("Les villageois ont gagnés !")
+            return True
 
 
 
     def _turn(self):
+
+        if self.end(self.is_game_finish()):
+            return
+
 
         def night_turn(self):
 
@@ -106,10 +140,6 @@ class Game:
         dawn_turn(self)
         day_turn(self)
         twilight_turn(self)
-
-    def end(self):
-        pass
-
 
 
 if __name__ == "__main__":
