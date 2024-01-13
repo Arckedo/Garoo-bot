@@ -28,7 +28,7 @@ class Villager(_Role):
 class Seer(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="seer")
-    
+
     def night_action(self):
         print(input("C'est au tour du Seer\nQui veut tu regarder se soir ?\nRéponse : "))
         print()
@@ -36,7 +36,7 @@ class Seer(_Role):
 class Witch(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="witch")
-    
+
     def night_action(self):
         print(input("C'est au tour de la witch\nVeut tu utiliser tes potions se soir ?\nRéponse : "))
         print()
@@ -44,7 +44,7 @@ class Witch(_Role):
 class Hunter(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="hunter")
-        
+
     def dawn_action(self):
         print(input("C'est au tour du Hunter\nQui veut tu viser se matin ?\nRéponse : "))
         print()
