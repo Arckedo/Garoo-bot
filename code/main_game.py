@@ -13,8 +13,6 @@ class Game:
         self.turn_count = turn_count
 
 
-    def test_send(self):
-        self.client.send(1195494438810701916, "Jeu créé avec succès :tada:")
 
 
     def start(self):
