@@ -1,9 +1,9 @@
 
-class _Player:
+class Player:
     def __init__(self, id):
         self.id = id
 
-class _Role(_Player):
+class _Role(Player):
     def __init__(self, id, is_alive, role, side = None):
         super().__init__(id)
         self.role = role
@@ -12,15 +12,24 @@ class _Role(_Player):
         self.side = side
 
 #region Roles
+class _Group_Role(_Role):
+    def __init__(self, id, is_alive, role, side = None, has_role_voted = None):
+        super().__init__(id, is_alive, role, side)
+        self.has_role_voted = has_role_voted
+
+
 
 class Werewolf(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="werewolf", side="werewolf")
 
-    def night_action(self):
+    def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
-        print(input("C'est au tour du werewolf\nQui veut tu tuer se soir ?\nRéponse : "))
+        kill = print(str(input("C'est au tour du werewolf\nQui veut tu tuer se soir ?\nRéponse : ")))
         print()
+        for player in game.player_list:
+            if player.id == kill:
+                player.is_alive = False
         #--------------------------
 
 class Villager(_Role):
@@ -32,7 +41,7 @@ class Seer(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="seer",side="villager")
     
-    def night_action(self):
+    def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
         print(input("C'est au tour du Seer\nQui veut tu regarder se soir ?\nRéponse : "))
@@ -43,7 +52,7 @@ class Witch(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="witch",side="villager")
     
-    def night_action(self):
+    def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
         print(input("C'est au tour de la witch\nVeut tu utiliser tes potions se soir ?\nRéponse : "))
@@ -54,7 +63,7 @@ class Hunter(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="hunter",side="villager")
         
-    def dawn_action(self):
+    def dawn_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
         print(input("C'est au tour du Hunter\nQui veut tu viser se matin ?\nRéponse : "))
@@ -65,7 +74,7 @@ class Thief(_Role):
     def __init__(self, id, is_alive):
         super().__init__(id, is_alive, role="thief",side="villager")
 
-    def night_action(self):
+    def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         print(input("C'est au tour du Thief\nA qui veut tu voler une carte ?\nRéponse : "))
         print()
