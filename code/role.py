@@ -2,44 +2,36 @@
 class Player:
     def __init__(self, id):
         self.id = id
+        self.is_alive = True
+        self.is_mayor = False
 
-class _Role(Player):
-    def __init__(self, id, is_alive, role, side = None):
-        super().__init__(id)
-        self.role = role
-        self.mayor = False
-        self.is_alive = is_alive
-        self.side = side
+
+class _Role:
+    def __init__(self, lst_player : list):
+        self.lst_player = lst_player
 
 #region Roles
-class _Group_Role(_Role):
-    def __init__(self, id, is_alive, role, side = None, has_role_voted = None):
-        super().__init__(id, is_alive, role, side)
-        self.has_role_voted = has_role_voted
-
-
 
 class Werewolf(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="werewolf", side="werewolf")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
         kill = print(str(input("C'est au tour du werewolf\nQui veut tu tuer se soir ?\nRéponse : ")))
         print()
-        for player in game.player_list:
-            if player.id == kill:
-                player.is_alive = False
         #--------------------------
 
 class Villager(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="villager",side="villager")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
+
 
 
 class Seer(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="seer",side="villager")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
+
     
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
@@ -49,8 +41,9 @@ class Seer(_Role):
         #--------------------------
 
 class Witch(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="witch",side="villager")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
+
     
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
@@ -60,8 +53,9 @@ class Witch(_Role):
         #--------------------------
 
 class Hunter(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="hunter",side="villager")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
+
         
     def dawn_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
@@ -71,8 +65,9 @@ class Hunter(_Role):
         #--------------------------
 
 class Thief(_Role):
-    def __init__(self, id, is_alive):
-        super().__init__(id, is_alive, role="thief",side="villager")
+    def __init__(self, lst_player):
+        super().__init__(lst_player)
+
 
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)

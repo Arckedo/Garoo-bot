@@ -59,7 +59,7 @@ class Game:
             # Vérifie si la classe de rôle n'est pas déjà dans la liste de rôles
             if role_class not in role_list :
                 # Crée un nouveau rôle avec un joueur et l'ajoute à la liste de rôles
-                role = role_class([Player(id=player_id, is_alive=True)],)
+                role = role_class([Player(id=player_id)] )
                 self.role_list.append(role)
             else:
                 # Si la classe de rôle est déjà présente, ajoute un nouveau joueur au rôle existant
@@ -78,8 +78,8 @@ class Game:
         """
         
         # Vérifie si la condition de fin de jeu est atteinte
-        if self.end(self.is_game_finish()):
-            return
+        #if self.end(self.is_game_finish()):
+        #    return
 
         def night_turn(self):
             # INTERACTION À REMPLACER (Front)
@@ -98,8 +98,6 @@ class Game:
                 if type(role) in day_action_list:
                     role.day_action(game=self)
             
-            day_vote(self)
-
             def day_vote(self):
                 # INTERACTION À REMPLACER (Front)
 
@@ -112,7 +110,7 @@ class Game:
 
                 # Parcourt la liste des rôles pour permettre à chaque joueur vivant de voter
                 for role in self.role_list:
-                    for player in role.player_list:
+                    for player in role.lst_player:
                         if player.is_alive:
                             
                             # Fonction interne pour mettre à jour le dictionnaire des votes
@@ -136,24 +134,33 @@ class Game:
                 # Calcul du nombre total de votes           
                 nb_vote = sum(dic_vote.values())
 
-                # Vérification si tous les votants ont exprimé leur vote
+                victim_voted = False
+
                 if nb_voter == nb_vote:
-                    # Détermination du joueur ayant reçu le plus de votes
+                    # Détermination du joueur sélectionné par le plus de votes
                     max_vote = max(dic_vote.values())
-                    for player in self.player_list:
-                        if player.is_alive:
-                            # Élimination du joueur ayant reçu le plus de votes
-                            if dic_vote[player.id] == max_vote:
-                                player.is_alive = False
-                                # Gestion du cas où le joueur éliminé est le maire
-                                if player.is_mayor():
-                                    self.mayor_vote()
-                            else:
-                                # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
-                                day_vote(self)
-                        else:
-                            # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
-                            day_vote(self)
+                    
+                    index_max_vote = 0
+                    for vote_value in dic_vote.values():
+                        if vote_value == max_vote:
+                            index_max_vote += 1
+                        if index_max_vote > 1:
+                            print("Egalité, au maire de départagé !")
+                            return
+
+                    for role in self.role_list:
+                        for player in role.lst_player:
+                            if player.is_alive:
+                                # Attribution du statut de maire au joueur ayant reçu le plus de votes
+                                if player.id in dic_vote.keys():
+                                    if dic_vote[player.id] == max_vote:
+                                        player.is_mayor = True
+                                        victim_voted = True
+                                        print("Le nouveau maire est : ", player.id)
+                if victim_voted == False:
+                    # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
+                    mayor_vote(self)            
+            day_vote(self)
 
         def mayor_vote(self):
             # INTERACTION À REMPLACER (Front)
@@ -167,7 +174,7 @@ class Game:
             dic_vote = {}
             # Parcourt la liste des rôles pour permettre à chaque joueur vivant de voter
             for role in self.role_list:
-                for player in role.player_list:
+                for player in role.lst_player:
                     if player.is_alive:
 
                         # Fonction interne pour mettre à jour le dictionnaire des votes
@@ -180,7 +187,7 @@ class Game:
                         nb_voter += 1
                         
                         # Interaction avec l'utilisateur pour obtenir le vote du joueur
-                        vote = input(f"Qui veux-tu voter ? Joueur {player.id}\nRéponse:")
+                        vote = int(input(f"Qui veux-tu voter ? Joueur {player.id}\nRéponse:"))
                         print(vote)
                         
                         # Attribution du poids du vote
@@ -189,21 +196,34 @@ class Game:
             # Calcul du nombre total de votes            
             nb_vote = sum(dic_vote.values())
             
+            mayor_voted = False
+
             # Vérification si tous les votants ont exprimé leur vote
             if nb_voter == nb_vote:
                 # Détermination du joueur sélectionné par le plus de votes
                 max_vote = max(dic_vote.values())
-                for player in self.player_list:
-                    if player.is_alive:
-                        # Attribution du statut de maire au joueur ayant reçu le plus de votes
-                        if dic_vote[player.id] == max_vote:
-                            player.is_mayor = True
-                        else:
-                            # Appel récursif pour effectuer un nouveau tour d'élection du maire si il y a eu un problème
-                            mayor_vote(self)
-                    else:
-                        # Appel récursif pour effectuer un nouveau tour d'élection du maire si il y a eu un problème
+                
+                index_max_vote = 0
+                for vote_value in dic_vote.values():
+                    if vote_value == max_vote:
+                        index_max_vote += 1
+                    if index_max_vote > 1:
+                        print("Egalité ! On recommence !")
                         mayor_vote(self)
+                        return
+
+                for role in self.role_list:
+                    for player in role.lst_player:
+                        if player.is_alive:
+                            # Attribution du statut de maire au joueur ayant reçu le plus de votes
+                            if player.id in dic_vote.keys():
+                                if dic_vote[player.id] == max_vote:
+                                    player.is_mayor = True
+                                    mayor_voted = True
+                                    print("Le nouveau maire est : ", player.id)
+            if mayor_voted == False:
+                # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
+                mayor_vote(self)
 
 
         if self.turn_count == 0:
