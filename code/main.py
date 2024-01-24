@@ -174,9 +174,6 @@ class Game:
         def mayor_vote(self):
             # INTERACTION À REMPLACER (Front)
 
-
-
-
             print("Élisez le nouveau maire !")
             # Initialisation des variables pour le décompte des votes
             nb_voter = 0
@@ -306,19 +303,6 @@ class Game:
             print("La partie est terminée !")
             print("Les villageois ont gagné !")
             return True
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
