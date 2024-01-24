@@ -18,8 +18,10 @@ class Werewolf(_Role):
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
-        kill = print(str(input("C'est au tour du werewolf\nQui veut tu tuer se soir ?\nRéponse : ")))
-        print()
+        for role in game.role_list:
+            for player in role.list_player:
+                if player.is_alive and player.side == "villager":
+                    print("Envoi l'interface choix du villageois à tuer !") 
         #--------------------------
 
 class Villager(_Role):
@@ -36,20 +38,32 @@ class Seer(_Role):
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        print(input("C'est au tour du Seer\nQui veut tu regarder se soir ?\nRéponse : "))
-        print()
+        for player in game.list_player:
+            if player.is_alive:
+                print("Envoi l'interface choix du joueur que la voyante veux voir")
+                select_player = True
+                if select_player:
+                    print(player.role)
         #--------------------------
 
 class Witch(_Role):
     def __init__(self, lst_player):
         super().__init__(lst_player)
+        self.life_potion = 1
+        self.death_potion = 1
 
     
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        print(input("C'est au tour de la witch\nVeut tu utiliser tes potions se soir ?\nRéponse : "))
-        print()
+        if self.life_potion == 1 and game.list_killed_night != []:
+            print("Envoi de l'interface pour choisir quel joueur la sorcière veut-elle ressuciter")
+        if self.death_potion == 1:
+            for role in game.role_list:
+                for player in role.list_player:
+                    if player.is_alive:
+                        print("Envoi de l'interface pour choisir quel joueur la sorcière veut-elle tuer")
+
         #--------------------------
 
 class Hunter(_Role):
@@ -57,11 +71,14 @@ class Hunter(_Role):
         super().__init__(lst_player)
 
         
-    def dawn_action(self,game = None):
+    def day_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        print(input("C'est au tour du Hunter\nQui veut tu viser se matin ?\nRéponse : "))
-        print()
+        for player in self.lst_player:
+            if player.id in game.list_killed_night:
+                print("Envoi de l'interface pour choisir enver quel joueur le chasseur veut se venger")
+
+
         #--------------------------
 
 class Thief(_Role):
@@ -79,9 +96,7 @@ class Thief(_Role):
 
 
 night_action_list = [Werewolf, Seer, Witch, Thief]
-dawn_action_list = [Hunter]
-day_action_list = []
-twilight_action_list = []
+day_action_list = [Hunter]
 
 role_order = ["werewolf", "seer", "witch", "thief", "hunter", "villager"]
 

@@ -18,6 +18,7 @@ class Game:
 
         self.id_list = id_list
         self.turn_count = turn_count
+        self.list_killed_night = []
 
         # Si la role_list n'est pas encore définie, trie les rôles pour les mettre dans l'ordre de passage
         if role_list is None:
