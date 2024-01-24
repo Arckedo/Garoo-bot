@@ -120,23 +120,25 @@ class Game:
                                 else:
                                     dic_vote[vote] = i
 
-                            nb_voter += 1
                             # Interaction avec l'utilisateur pour obtenir le vote du joueur
-                            vote = input(f"Qui veux-tu voter ? Joueur {player.id}\nRéponse:")
+                            vote = int(input(f"Qui veux-tu voter ? Joueur {player.id}\nRéponse:"))
                             print(vote)
 
                             # Attribution du poids du vote en fonction du rôle du joueur (double vote pour le maire)
-                            if player.is_mayor():
+                            if player.is_mayor :
                                 vote_dic(2)
+                                nb_voter += 2
                             else:
                                 vote_dic(1)
+                                nb_voter += 1
+
 
                 # Calcul du nombre total de votes           
                 nb_vote = sum(dic_vote.values())
 
                 victim_voted = False
-
                 if nb_voter == nb_vote:
+                    print("Tous les joueurs ont vote !")
                     # Détermination du joueur sélectionné par le plus de votes
                     max_vote = max(dic_vote.values())
                     
@@ -150,16 +152,23 @@ class Game:
 
                     for role in self.role_list:
                         for player in role.lst_player:
-                            if player.is_alive:
-                                # Attribution du statut de maire au joueur ayant reçu le plus de votes
+                            if player.is_alive == True:
+                                # Tue le joueur qui a le plus de votes
                                 if player.id in dic_vote.keys():
+                                    print("CA MARCHE; player id", player.id)
                                     if dic_vote[player.id] == max_vote:
-                                        player.is_mayor = True
                                         victim_voted = True
-                                        print("Le nouveau maire est : ", player.id)
+                                        player.is_alive = False
+                                        print("Le Joueur mort ce soir est :", player.id)
+                                        if player.is_mayor:
+                                            print("Le maire est mort ! Il est temps d'en choisir un autre !")
+                                            mayor_vote(self)
+                                        return
                 if victim_voted == False:
                     # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
-                    mayor_vote(self)            
+                    day_vote(self)
+            
+            # Appel de la fonction de vote
             day_vote(self)
 
         def mayor_vote(self):

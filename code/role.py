@@ -57,7 +57,7 @@ class Hunter(_Role):
         super().__init__(lst_player)
 
         
-    def dawn_action(self,game = None):
+    def day_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
         print(input("C'est au tour du Hunter\nQui veut tu viser se matin ?\nRéponse : "))
@@ -79,9 +79,7 @@ class Thief(_Role):
 
 
 night_action_list = [Werewolf, Seer, Witch, Thief]
-dawn_action_list = [Hunter]
-day_action_list = []
-twilight_action_list = []
+day_action_list = [Hunter]
 
 role_order = ["werewolf", "seer", "witch", "thief", "hunter", "villager"]
 
