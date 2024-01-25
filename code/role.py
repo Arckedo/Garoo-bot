@@ -18,9 +18,10 @@ class Werewolf(_Role):
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
+        
         for role in game.role_list:
-            for player in role.list_player:
-                if player.is_alive and player.side == "villager":
+            for player in role.lst_player:
+                if player.is_alive and not player in self.lst_player:
                     print("Envoi l'interface choix du villageois à tuer !") 
         #--------------------------
 
@@ -38,12 +39,13 @@ class Seer(_Role):
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        for player in game.list_player:
-            if player.is_alive:
-                print("Envoi l'interface choix du joueur que la voyante veux voir")
-                select_player = True
-                if select_player:
-                    print(player.role)
+        for role in game.role_list:
+            for player in role.lst_player:
+                if player.is_alive:
+                    print("Envoi l'interface choix du joueur que la voyante veux voir")
+                    select_player = True
+                    if select_player:
+                        print(role)
         #--------------------------
 
 class Witch(_Role):
@@ -56,11 +58,12 @@ class Witch(_Role):
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
+        print("Envoi de l'interface pour choisir quellle action faire")
         if self.life_potion == 1 and game.list_killed_night != []:
             print("Envoi de l'interface pour choisir quel joueur la sorcière veut-elle ressuciter")
         if self.death_potion == 1:
             for role in game.role_list:
-                for player in role.list_player:
+                for player in role.lst_player:
                     if player.is_alive:
                         print("Envoi de l'interface pour choisir quel joueur la sorcière veut-elle tuer")
 
