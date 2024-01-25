@@ -1,6 +1,6 @@
 import random
 from role import *
-from interactions import GarooClient
+from bot.interactions import GarooClient
 from messages import GarooMessages
 
 class Game:

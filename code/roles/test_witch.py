@@ -1,7 +1,7 @@
 from discord.interactions import Interaction
-from roles.role_preset import RolePreset
+from roles.preset_template import RolePreset
 from role import _Player as Player
-from interactions import GarooButton, GarooClient, GarooUI
+from bot.interactions import GarooButton, GarooClient, GarooUI
 from typing import Optional
 
 
