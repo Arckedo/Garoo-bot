@@ -18,11 +18,13 @@ class Werewolf(_Role):
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
-        
+        player_choosen = int(input("Choisissez le joueur que vous voullez tuer parmi les suivants %r : " %game.id_list))
         for role in game.role_list:
             for player in role.lst_player:
                 if player.is_alive and not player in self.lst_player:
                     print("Envoi l'interface choix du villageois à tuer !") 
+                    game.list_killed_night.append(player_choosen)
+                    game.list_not_killed_yet.remove(player_choosen)
         #--------------------------
 
 class Villager(_Role):
