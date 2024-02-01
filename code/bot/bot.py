@@ -1,5 +1,5 @@
 import discord
-from bot.interactions import GarooClient, GarooVote
+from bot.interactions import GarooClient, GarooChoose
 
 
 # Préparation des "intents" (permissions du bot au niveau API)
@@ -13,7 +13,7 @@ bot = discord.Bot(intents=intents)
 bot.debug_guilds = [1194944354859614339]
 
 # Chargement de l'extension ("cog") contenant les commandes
-bot.load_extension("commands")
+bot.load_extension("bot.commands")
 
 
 # Ces fonctions sont des évènements gérés par pycord
@@ -41,9 +41,9 @@ async def on_message(message: discord.Message):
         # Rag : 576435921390403623
         # Arckedo : 508005660516941824
         # Armoniake : 663518185068429332
-        interface = GarooVote([576435921390403623, 508005660516941824], [576435921390403623, 663518185068429332])
+        interface = GarooChoose(["Action A", "Action B"], [576435921390403623, 663518185068429332])
         results = client.send_interface("test", interface)
-        print(results)
+        print("Resultats :", results)
 
 
 def run_bot(token: str) -> None:
