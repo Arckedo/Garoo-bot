@@ -21,10 +21,13 @@ class Werewolf(_Role):
         player_choosen = int(input("Choisissez le joueur que vous voullez tuer parmi les suivants %r : " %game.id_list))
         for role in game.role_list:
             for player in role.lst_player:
-                if player.is_alive and not player in self.lst_player:
-                    print("Envoi l'interface choix du villageois à tuer !") 
-                    game.list_killed_night.append(player_choosen)
+                if player.is_alive and not player in self.lst_player and player.id == player_choosen:
+                    #print("Envoi l'interface choix du villageois à tuer !")
+                    print(player_choosen in game.list_not_killed_yet)
+                    print(player_choosen in game.list_killed_night)
                     game.list_not_killed_yet.remove(player_choosen)
+                    game.list_killed_night.append(player_choosen)
+                    
         #--------------------------
 
 class Villager(_Role):

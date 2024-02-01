@@ -317,4 +317,4 @@ if __name__ == "__main__":
     id_list = [1, 2, 3, 4, 5]
     role_list = ["werewolf", "villager", "seer", "witch", "hunter"]
 
-    game = Game(id_list, turn_count=0,start_role_list= role_list)
+    game = Game(id_list, turn_count = 0,start_role_list = role_list)
