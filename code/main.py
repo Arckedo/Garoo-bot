@@ -100,9 +100,7 @@ class Game:
             
             def day_vote(self):
                 # INTERACTION À REMPLACER (Front)
-
-
-
+                print()
                 print("Abat les loups: C'est l'heure de voter !")
                 # Initialisation des variables pour le décompte des votes
                 nb_voter = 0
@@ -155,17 +153,19 @@ class Game:
                             if player.is_alive == True:
                                 # Tue le joueur qui a le plus de votes
                                 if player.id in dic_vote.keys():
-                                    print("CA MARCHE; player id", player.id)
                                     if dic_vote[player.id] == max_vote:
                                         victim_voted = True
                                         player.is_alive = False
-                                        print("Le Joueur mort ce soir est :", player.id)
+                                        print()
+                                        print("Le Joueur mort est :", player.id)
                                         if player.is_mayor:
                                             print("Le maire est mort ! Il est temps d'en choisir un autre !")
                                             mayor_vote(self)
                                         return
                 if victim_voted == False:
                     # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
+                    print()
+                    print("Il y a eu un problème dans les votes ! Mettez vous d'accord !")
                     day_vote(self)
             
             # Appel de la fonction de vote
@@ -173,7 +173,7 @@ class Game:
 
         def mayor_vote(self):
             # INTERACTION À REMPLACER (Front)
-
+            print()
             print("Élisez le nouveau maire !")
             # Initialisation des variables pour le décompte des votes
             nb_voter = 0
@@ -228,6 +228,8 @@ class Game:
                                     mayor_voted = True
                                     print("Le nouveau maire est : ", player.id)
             if mayor_voted == False:
+                print()
+                print("Il y a eu un problème dans les votes ! Mettez vous d'accord !")
                 # Appel récursif pour effectuer un nouveau tour de vote si il y a eu un problème
                 mayor_vote(self)
 
@@ -244,18 +246,6 @@ class Game:
         day_turn(self)
 
         self._turn()
-
-
-
-
-
-
-
-
-
-
-
-
 
     def is_game_finish(self):
         """
