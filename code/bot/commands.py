@@ -1,6 +1,6 @@
 from discord import ApplicationContext, Bot, Cog, slash_command
 from main_game import Game
-from interactions import GarooClient
+from bot.interactions import GarooClient
 
 
 class GarooCommands(Cog):

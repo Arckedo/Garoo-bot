@@ -1,5 +1,5 @@
 import discord
-from interactions import GarooClient, GarooVote
+from bot.interactions import GarooClient, GarooVote
 
 
 # Préparation des "intents" (permissions du bot au niveau API)
