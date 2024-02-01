@@ -45,16 +45,19 @@ class GarooSelect(Select):
 class GarooUI(View):
     """Représente une interface contenant un ou plusieurs boutons."""
 
-    def __init__(self, *items: Union[GarooButton, GarooSelect], **kwargs) -> None:
+    def __init__(self, *items: Union[GarooButton, GarooSelect], filter: list[int], **kwargs) -> None:
         super().__init__(**kwargs)
+        self.filter = filter
         self.event: asyncio.Event = None
-        self.children: list[Union[GarooButton, GarooSelect]] = list(*items)
+        self.children: list[Union[GarooButton, GarooSelect]] = list(items)
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         """COROUTINE - Une fonction appelée lorsque une interaction se produit dans l'interface.
         Retourne si la fonction `callback` associée à l'interaction devrait être appelée ou pas.
         Cette fonction peut être écrasée par des sous-classes."""
-        return True
+        if not interaction.user.id in self.filter:
+            await interaction.response.send_message("❌ Vous n'avez pas le droit d'interagir.", ephemeral=True)
+        return False
 
     def get_value(self) -> Any:
         """Renvoie la valeur associée à l'interface.
@@ -76,8 +79,7 @@ class GarooVote(GarooUI):
         names = entries.copy() # [self.message.guild.get_member(id).nick for id in entries]
         options = [SelectOption(label=str(name), value=str(id)) for name, id in zip(names, entries)]
 
-        super().__init__([Select(options=options)], **kwargs)
-        self.filter = filter
+        super().__init__(Select(options=options), filter=filter, **kwargs)
         self.weight = weight
         self.voted_list: list[int] = []
         self.votes = {k: 0 for k in names}
@@ -106,8 +108,29 @@ class GarooVote(GarooUI):
         # Ne pas appeller le callback des boutons
         return False
     
-    def get_value(self):
+    def get_value(self) -> dict:
         return self.votes
+
+
+class GarooChoose(GarooUI):
+    """Une sous-classe de GarooUI, configurée pour permettre
+    au joueurs de choisir une action."""
+
+    def __init__(self, entries: list, filter: list[int], **kwargs):
+        options = [SelectOption(label=str(e)) for e in entries]
+        super().__init__(Select(options=options), filter=filter, **kwargs)
+
+    async def interaction_check(self, interaction: Interaction) -> bool:
+        # Si l'utilisateur n'est pas dans la liste des autoriés
+        if interaction.user.id in self.filter:
+            await interaction.response.send_message("✅ Vous avez choisi.", ephemeral=True)
+            self.event.set()
+        else:
+            await interaction.response.send_message("❌ Vous n'avez pas le droit d'interagir.", ephemeral=True)
+        return False
+
+    def get_value(self) -> str:
+        return self.children[0].values[0]
 
 
 class GarooClient:
