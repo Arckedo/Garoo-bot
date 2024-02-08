@@ -1,8 +1,32 @@
-from discord import Client, SelectOption, TextChannel
+from discord import Client, User, SelectOption, TextChannel
 from discord.interactions import Interaction
 from discord.ui import Button, Select, View
-from typing import Any, Union
+from typing import Any, Optional, Union
 import asyncio
+
+
+"""
+### Envoyer des interaction ###
+
+# Envoyer un message simple
+self.client.send("Message envoyé à tous")
+
+# Envoyer et recevoir les résultats d'un vote
+# Sous la forme d'un dico {entry: vote_count}
+my_vote = GarooVote(...)
+results = self.client.send_interface("Message", my_vote)
+
+# Même chose pour un choix simple
+my_choose = GarooChoose(...)
+result = self.client.send_interface("Message", my_choose)
+
+# Envoyer un message dans le salon des loup-garoux
+self.client.send("Message", dest=self.client.werewolf_channel)
+
+# Envoyer un message à un membre (en messages privés)
+member = self.client.get_member(...)
+self.client.send("Message", dest=member)
+"""
 
 
 class GarooButton(Button):
@@ -75,6 +99,16 @@ class GarooVote(GarooUI):
     """Une sous-classe de GarooUI, configurée pour organiser un vote."""
 
     def __init__(self, entries: list[int], filter: list[int], weight: dict[int, int] = {}, **kwargs) -> None:
+        """
+        Paramètres
+        ----------
+        entries : `list`
+            Liste des choix pour le vote
+        filter : `list[int]`
+            Liste des ID des joueurs autorisés à voter.
+        weight : `dict[int, int]`
+            Dictionnaire sous la forme `{id_joueur: poids}` où `poids` est le poids du vote du joueur.
+        """
         # Liste des noms des joueurs à partir de la liste des id
         names = entries.copy() # [self.message.guild.get_member(id).nick for id in entries]
         options = [SelectOption(label=str(name), value=str(id)) for name, id in zip(names, entries)]
@@ -117,6 +151,14 @@ class GarooChoose(GarooUI):
     au joueurs de choisir une action."""
 
     def __init__(self, entries: list, filter: list[int], **kwargs):
+        """
+        Paramètres
+        ----------
+        entries : `list`
+            Liste des choix à sélectionner.
+        filter : `list[int]`
+            Liste des ID des joueurs autorisés à interagir.
+        """
         options = [SelectOption(label=str(e)) for e in entries]
         super().__init__(Select(options=options), filter=filter, **kwargs)
 
@@ -136,26 +178,76 @@ class GarooChoose(GarooUI):
 class GarooClient:
     """Représente un client Discord utilisable par le jeu."""
 
-    def __init__(self, client: Client, channel: TextChannel) -> None:
+    def __init__(self, client: Client, channel: TextChannel, werewolf_channel: TextChannel) -> None:
+        """
+        Paramètres
+        ----------
+        client : `Client`
+            Un client Discord.
+        channel : `TextChannel`
+            Un salon Discord lié à la partie.
+        werewolf_channel : `TextChannel`
+            Un salon Discord pour les loup-garoux.
+        """
         self.client = client
-        """Un client Discord."""
         self.channel = channel
-        """Un salon Discord lié à la partie."""
+        self.werewolf_channel = werewolf_channel
+    
+    def get_user(self, id: int) -> Optional[User]:
+        """Récupère un membre à partir d'un identifiant Discord.
+        
+        Paramètres
+        ----------
+        id : `int`
+            L'identifiant Discord de l'utilisateur.
+        
+        Retourne
+        --------
+        `Optional[User]`
+            L'utilisateur associé à l'identifiant.
+            Renvoie `None` si l'identifiant est invalide.
+        """
+        return self.client.get_user(id)
 
-    async def __send_interface(self, content: str, view: GarooUI) -> None:
-        """Envoie un message contenant une interface."""
+    def send(self, content: str, dest: Union[TextChannel, User] = None) -> None:
+        """Envoie un message.
+
+        Paramètres
+        ----------
+        content : `str`
+            Le texte du message.
+        dest: `Union[TextChannel, User]`
+            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
+            envoyé dans le salon `channel` lié à l'objet.
+        """
+        dest = dest or self.channel
+        self.client.loop.run_until_complete(dest.send(content))
+    
+    async def __send_interface(self, content: str, view: GarooUI, dest: Union[TextChannel, User]) -> None:
         event = asyncio.Event()
         view.set_event(event)
-        asyncio.create_task(self.channel.send(content, view=view))
+        asyncio.create_task(dest.send(content, view=view))
         await event.wait()
 
-    def send(self, content: str) -> None:
-        """Envoie un message au salon lié à la partie actuelle."""
-        self.client.loop.run_until_complete(self.channel.send(content))
-
-    def send_interface(self, content: str, interface: GarooUI) -> None:
+    def send_interface(self, content: str, interface: GarooUI, dest: Union[TextChannel, User] = None) -> None:
         """Envoie un message contenant une interface.
-        Renvoie la valeur associée à l'interface une fois l'interaction achevée."""
-        task = self.__send_interface(content, view=interface)
+
+        Paramètres
+        ----------
+        content : `str`
+            Le texte du message.
+        interface: `GarooUI`
+            L'interface à envoyer.
+        dest: `Union[TextChannel, User]`
+            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
+            envoyé dans le salon `channel` lié à l'objet.
+
+        Retourne
+        --------
+        `Any`
+            La valeur associée à l'interface une fois l'interaction achevée.
+        """
+        dest = dest or self.channel
+        task = self.__send_interface(content, interface, dest)
         self.client.loop.run_until_complete(task)
         return interface.get_value()
