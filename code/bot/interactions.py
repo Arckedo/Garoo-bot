@@ -72,7 +72,11 @@ class GarooUI(View):
 
 
 class GarooVote(GarooUI):
-    """Une sous-classe de GarooUI, configurée pour organiser un vote."""
+    """Une sous-classe de GarooUI, configurée pour organiser un vote.
+    
+    
+    weight : le poids des votes
+    """
 
     def __init__(self, entries: list[int], filter: list[int], weight: dict[int, int] = {}, **kwargs) -> None:
         # Liste des noms des joueurs à partir de la liste des id
@@ -114,9 +118,15 @@ class GarooVote(GarooUI):
 
 class GarooChoose(GarooUI):
     """Une sous-classe de GarooUI, configurée pour permettre
-    au joueurs de choisir une action."""
+    au joueurs de choisir une action.
+    
+    entries: les choix possibles
+    filter: les joueurs qui ont le droit d'intéragir
+    kwargs: pour la forme
 
-    def __init__(self, entries: list, filter: list[int], **kwargs):
+    """
+
+    def __init__(self, entries: list[str], filter: list[int], **kwargs):
         options = [SelectOption(label=str(e)) for e in entries]
         super().__init__(Select(options=options), filter=filter, **kwargs)
 
