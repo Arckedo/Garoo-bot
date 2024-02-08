@@ -12,6 +12,11 @@ Le jeu peut être structurer en 3 parties:
 Voici la structure du côté Pure-Jeu:
 ![](images/game_structure.jpg)
 
+# Comment utiliser Garoo-bot ?
+Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
+Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/
+Une fois l'installation terminée. 
+
 # Specs
 - Python 3.11.7
 - Pycord 2.4
