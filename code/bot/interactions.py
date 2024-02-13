@@ -41,7 +41,7 @@ class GarooButton(Button):
         Cette fonction peut être écrasée par des sous-classes."""
         self.event.set()
 
-    def get_value(self) -> None:
+    def get_value(self) -> Any:
         """Renvoie la valeur associée au bouton.
         Cette fonction peut être écrasée par des sous-classes."""
         return None
@@ -103,7 +103,7 @@ class GarooVote(GarooUI):
         Paramètres
         ----------
         entries : `list`
-            Liste des choix pour le vote
+            Liste des choix pour le vote.
         filter : `list[int]`
             Liste des ID des joueurs autorisés à voter.
         weight : `dict[int, int]`
@@ -195,15 +195,15 @@ class GarooClient:
         self.client = client
         self.channel = channel
         self.werewolf_channel = werewolf_channel
-    
+
     def get_user(self, id: int) -> Optional[User]:
         """Récupère un membre à partir d'un identifiant Discord.
-        
+
         Paramètres
         ----------
         id : `int`
             L'identifiant Discord de l'utilisateur.
-        
+
         Retourne
         --------
         `Optional[User]`
@@ -225,7 +225,7 @@ class GarooClient:
         """
         dest = dest or self.channel
         self.client.loop.run_until_complete(dest.send(content))
-    
+
     async def __send_interface(self, content: str, view: GarooUI, dest: Union[TextChannel, User]) -> None:
         event = asyncio.Event()
         view.setup_event(event)

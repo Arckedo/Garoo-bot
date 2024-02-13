@@ -23,6 +23,6 @@ class GarooCommands(Cog):
         game._turn()
 
 
-# Fonction nécéssaire au chargement de l'extension par le bot
+# Fonction nécéssaire au chargement de l'extension par pycord
 def setup(bot):
     bot.add_cog(GarooCommands(bot))
