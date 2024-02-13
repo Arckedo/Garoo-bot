@@ -88,19 +88,15 @@ class GarooUI(View):
         Cette fonction peut être écrasée par des sous-classes."""
         return [child.get_value() for child in self.children]
 
-    def set_event(self, event: asyncio.Event) -> None:
-        """Change l'évènement de cette interface et de tous ses éléments."""
+    def setup_event(self, event: asyncio.Event) -> None:
+        """Change l'objet évènement associé à cette interface et à ses éléments."""
         self.event = event
         for child in self.children:
             child.event = event
 
 
 class GarooVote(GarooUI):
-    """Une sous-classe de GarooUI, configurée pour organiser un vote.
-    
-    
-    weight : le poids des votes
-    """
+    """Une sous-classe de GarooUI, configurée pour organiser un vote."""
 
     def __init__(self, entries: list[int], filter: list[int], weight: dict[int, int] = {}, **kwargs) -> None:
         """
@@ -135,30 +131,25 @@ class GarooVote(GarooUI):
             self.voted_list.append(user_id)
             self.votes[entry] += self.weight.get(user_id, 1)
             await interaction.response.send_message("✅ Vous avez voté.", ephemeral=True)
-        
+
         else:
             await interaction.response.send_message("❌ Vous avez déjà voté.", ephemeral=True)
-        
+
         # Si tous les utilisateurs de la liste ont voté
         if len(self.voted_list) >= len(self.filter):
+            # Termine l'intraction
             self.event.set()
-        
+
         # Ne pas appeller le callback des boutons
         return False
-    
+
     def get_value(self) -> dict:
         return self.votes
 
 
 class GarooChoose(GarooUI):
     """Une sous-classe de GarooUI, configurée pour permettre
-    au joueurs de choisir une action.
-    
-    entries: les choix possibles
-    filter: les joueurs qui ont le droit d'intéragir
-    kwargs: pour la forme
-
-    """
+    au joueurs de choisir une action."""
 
     def __init__(self, entries: list, filter: list[int], **kwargs):
         """
@@ -173,11 +164,13 @@ class GarooChoose(GarooUI):
         super().__init__(Select(options=options), filter=filter, **kwargs)
 
     async def interaction_check(self, interaction: Interaction) -> bool:
-        # Si l'utilisateur n'est pas dans la liste des autoriés
         if interaction.user.id in self.filter:
+            # Si l'utilisateur est dans la liste des autoriés
             await interaction.response.send_message("✅ Vous avez choisi.", ephemeral=True)
+            # Termine l'intraction
             self.event.set()
         else:
+            # Si l'utilisateur n'est pas dans la liste des autaurisés
             await interaction.response.send_message("❌ Vous n'avez pas le droit d'interagir.", ephemeral=True)
         return False
 
@@ -235,7 +228,7 @@ class GarooClient:
     
     async def __send_interface(self, content: str, view: GarooUI, dest: Union[TextChannel, User]) -> None:
         event = asyncio.Event()
-        view.set_event(event)
+        view.setup_event(event)
         asyncio.create_task(dest.send(content, view=view))
         await event.wait()
 
