@@ -1,13 +1,4 @@
-import os
-import sys
 
-# Obtien le chemin absolu du répertoire parent du répertoire actuel
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-# Ajoute le répertoire parent au chemin de recherche des modules
-sys.path.append(parent_dir)
-
-# Importe le module GarooVote relativement
 from bot.interactions import GarooVote
 
 
