@@ -1,13 +1,4 @@
-import os
-import sys
 
-# Obtien le chemin absolu du répertoire parent du répertoire actuel
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-# Ajoute le répertoire parent au chemin de recherche des modules
-sys.path.append(parent_dir)
-
-# Importe le module GarooVote relativement
 from bot.interactions import GarooVote
 
 
@@ -15,7 +6,6 @@ class Player:
     def __init__(self, id):
         self.id = id
         self.is_alive = True
-        self.is_mayor = False
 
 
 class _Role:
@@ -35,7 +25,7 @@ class Werewolf(_Role):
 
         stop = False
         while stop == False:
-            interface = GarooVote(entries=lst_alive ,filter=[player.id for player in self.lst_player])
+            interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
             dico_vote = game.client.send_interface("Place au vote des Loups AWOUUUUUU !",interface)
             print(dico_vote)
             
@@ -46,8 +36,6 @@ class Werewolf(_Role):
             if len(max_keys) == 1:
                 for role in game.role_list:
                     for player in role.lst_player:
-                        if game.find_mayor() != None and player.id == game.find_mayor().id:
-                            player.is_mayor = False
                         if player.id == max_keys[0]:
                             player.is_alive = False 
                             stop = True

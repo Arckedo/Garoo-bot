@@ -15,13 +15,34 @@ Voici la structure du côté Pure-Jeu:
 # Comment utiliser Garoo-bot ?
 Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
 
-Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction et gardez la localisation (dans un bloc-note où application de ce genre.
+>[!IMPORTANT]
+>Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction (installer maintenant) et gardez la localisation (dans un bloc-note où application de ce genre).
 
 Puis une fois l'installation terminée. Vérrifier d'abord si vous avez pip (utilisé pour installer les bibliothèque pour faire fonctionner le bot).
 
 Pour cela lancer l'éxécutable python.exe (trouvable à l'endroit que vous avez sauvegarder précédement), puis lancez la commmande suivante :
 
+>[!WARNING]
+>Si vous étes sur Windows :
+>-  ```py -m ensurepip```
 
+>[!WARNING]
+>Sinon :
+>- ```python -m ensurepip```
+
+Cela devrait ne rien si pip et bel et bien installé avec python sinon il sera installer (cette action ne nécésite pas internet pour être faite)
+
+Ensuite dans le même terminal (celui de python.exe) et installer la librairie Pycord 2.4 avec la commande suivante :
+
+>[!WARNING]
+>Pour Windows :
+>- ```py -m pip install py-cord==2.4```
+
+>[!WARNING]
+>Et pour UNIX/MacOS :
+>- ```python -m pip install py-cord==2.4```
+
+Il ne vous reste plus qu'a lancer le fichier `main.py` dans le dossier 
 
 # Specs
 - Python 3.11.7
@@ -53,3 +74,10 @@ LONG TERMES:
 EN +:
 -> Créer une image avec PIL pour animer un peu plus le bot discord (par exemple si quelqu'un meurt)
 -> Plusieurs langues de disponibles 
+
+Truc a faire:
+-> Un threads
+-> Rejoindre une partie
+-> Terminer Les roles
+-> Terminer le cahier des charges
+-> Bien documenter le code

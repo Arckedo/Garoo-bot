@@ -23,6 +23,8 @@ class Game:
         self.client = client
         self.id_list = id_list
         self.turn_count = turn_count
+        self.mayor_id = None
+
 
         # Si la role_list n'est pas encore définie, trie les rôles pour les mettre dans l'ordre de passage
         if role_list is None:
@@ -34,7 +36,6 @@ class Game:
         
         self.alive_notif = self.alive_sort()
 
-        print(self.dic_role_sort())
 
 
     def start(self, start_role_list):
@@ -86,13 +87,13 @@ class Game:
         # Vérifie si la condition de fin de jeu est atteinte
         end , winner = self.end()
         if end:
-            self.client.send("La partie est finie.")
+            self.client.send("> La partie est finie.")
             self.client.send(winner)
             return
 
         def night_turn(self):
             
-            self.client.send("La nuit tombe sur Thiercelieux... \nNuit : " + str(self.turn_count))
+            self.client.send("> La nuit tombe sur Thiercelieux... \nNuit : " + str(self.turn_count))
             
             for role in self.role_list:
                 if type(role) in night_action_list:
@@ -101,13 +102,13 @@ class Game:
 
         def day_turn(self):
             
-            self.client.send("Le jour se lève sur Thiercelieux...\nJour : " + str(self.turn_count))
+            self.client.send("> Le jour se lève sur Thiercelieux...\n> Jour : " + str(self.turn_count))
             
             death, resur = self.alive_notification()
-            self.client.send(f"Les joueurs suivant sont morts cette nuit : {death} \n Les joueurs suivant ont été ressucités cette nuit : {resur}")
+            self.client.send(f"> Les joueurs suivant sont morts cette nuit : {self.name_lst(death)} \n> Les joueurs suivant ont été ressucités cette nuit : {self.name_lst(resur)}")
 
-            if self.find_mayor() is None:
-                self.client.send(f"Le Maire est Mort !")
+            if self.mayor_id in death:
+                self.client.send(f"> Le Maire est Mort !")
                 mayor_vote(self)
             for role in self.role_list:
                 if type(role) in day_action_list:
@@ -116,13 +117,11 @@ class Game:
             def day_vote(self):
                 # INTERACTION À REMPLACER (Front)
                 lst_alive = self.alive_sort()
-                mayor = self.find_mayor()
 
                 stop = False
                 while stop == False:
-                    interface = GarooVote(entries=lst_alive ,filter=lst_alive , weight={mayor.id : 2})
-                    dico_vote = self.client.send_interface("Place au vote des villageois !\n ABAT LES LOUPS !",interface)
-                    print(dico_vote)
+                    interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive , weight={self.mayor_id : 2})
+                    dico_vote = self.client.send_interface("> Place au vote des villageois !\n> ABAT LES LOUPS !",interface)
                     
                     #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
                     max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
@@ -134,28 +133,36 @@ class Game:
                                 if player.id == max_keys[0]:
                                     player.is_alive = False
                                     self.alive_notification()
-                                    self.client.send(f"{player.id} est brulée sur la place de thercelieux!")
-                                    self.client.send(f"Son role était {role} !")
-                                    if player.id == mayor.id:
-                                        player.is_mayor = False
-                                        self.client.send(f"Le Maire est mort !")
+                                    self.client.send(f"> {self.client.get_user(player.id)} est brulée sur la place de thercelieux!")
+                                    self.client.send(f"> Son role était {role} !")
+                                    if player.id == self.mayor_id:
+                                        self.client.send(f"> Le Maire est mort !")
                                         mayor_vote(self)
                                     stop = True 
                     else:
-                        self.client.send(f"Les joueurs suivants ont eu le même nombre de vote : {max_keys} !\nIl n'y aura aucun mort lors de se vote.")
+                        self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !\n> Il n'y aura aucun mort lors de se vote.")
             # Appel de la fonction de vote
             day_vote(self)
 
         def mayor_vote(self):
             # INTERACTION À REMPLACER (Front)
             lst_alive = self.alive_sort()
-            
-
             stop = False
+            
+            if self.mayor_id is not None:
+                interface = GarooVote(entries=lst_alive ,filter=[self.mayor_id])
+                dico_vote = self.client.send_interface("> L'ancien Maire doit choisir un sucesseur !",interface)
+                for player in dico_vote:
+                    if dico_vote[player] == 1:
+
+                        self.mayor__id = dico_vote
+                        stop = True
+                if stop == False:
+                    mayor_vote(self)
+
             while stop == False:
-                interface = GarooVote(entries=lst_alive ,filter=lst_alive)
-                dico_vote = self.client.send_interface("Place au vote du Maire !",interface)
-                print(dico_vote)
+                interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive)
+                dico_vote = self.client.send_interface("> Place au vote du Maire !",interface)
                 
                 #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
                 max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
@@ -166,10 +173,11 @@ class Game:
                         for player in role.lst_player:
                             if player.id == max_keys[0]:
                                 player.is_mayor = True
-                                self.client.send(f"Le Maire est {player.id} !")
+                                self.client.send(f"> Le Maire est {self.name(player.id)} !")
                                 stop = True
+                                self.mayor_id = player.id
                 else:
-                    self.client.send(f"Les joueurs suivants ont eu le même nombre de vote : {max_keys} !")
+                    self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !")
                             
         
 
@@ -195,11 +203,11 @@ class Game:
                     else :
                         villager += 1
         if wolf == 0 and villager == 0:
-            return True, "**Les Arbres de la forets**, les Loups-Garous et les Villageois sont tous morts !"
+            return True, "> **Les Arbres de la forets**, les Loups-Garous et les Villageois sont tous morts !"
         elif wolf == 0:
-            return True, "Les Loups-Garous sont tous morts, **Les villageois ont gagné !**"
+            return True, "> Les Loups-Garous sont tous morts, **Les villageois ont gagné !**"
         elif villager == 0:
-            return True, "Les Villageois sont tous morts, **Les Loups-Garous ont gagné !**"
+            return True, "> Les Villageois sont tous morts, **Les Loups-Garous ont gagné !**"
         else:
             return False, None
 
@@ -212,12 +220,6 @@ class Game:
                 if player.is_alive == True:
                     lst.append(player.id)
         return lst
-
-    def find_mayor(self):
-        for role in self.role_list:
-            for player in role.lst_player:
-                if player.is_mayor == True:
-                    return player
     
     def dic_role_sort(self):
         dic = {}
@@ -238,7 +240,19 @@ class Game:
                     resur.append(player.id)
         self.alive_notif = self.alive_sort()
         return death, resur            
-                          
+
+    def name(self, player_id):
+            return self.client.get_user(player_id).display_name    
+    
+    def name_lst(self, lst):
+            return [self.client.get_user(player_id).display_name for player_id in lst]
+    
+    def entries(self, lst_entries):
+            lst = []
+            for player_id in lst_entries:
+                lst.append((self.client.get_user(player_id).display_name, player_id))
+            
+            return lst
 """
 if __name__ == "__main__":
     id_list = [1, 2, 3, 4, 5]
