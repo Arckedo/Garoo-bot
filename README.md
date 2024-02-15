@@ -74,3 +74,10 @@ LONG TERMES:
 EN +:
 -> Créer une image avec PIL pour animer un peu plus le bot discord (par exemple si quelqu'un meurt)
 -> Plusieurs langues de disponibles 
+
+Truc a faire:
+-> Un threads
+-> Rejoindre une partie
+-> Terminer Les roles
+-> Terminer le cahier des charges
+-> Bien documenter le code
