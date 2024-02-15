@@ -14,6 +14,7 @@ Voici la structure du côté Pure-Jeu:
 
 # Comment utiliser Garoo-bot ?
 Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
+
 >[!IMPORTANT]
 >Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction (installer maintenant) et gardez la localisation (dans un bloc-note où application de ce genre).
 
@@ -21,19 +22,25 @@ Puis une fois l'installation terminée. Vérrifier d'abord si vous avez pip (uti
 
 Pour cela lancer l'éxécutable python.exe (trouvable à l'endroit que vous avez sauvegarder précédement), puis lancez la commmande suivante :
 
-Si vous étes sur Windows :
--  ```py -m ensurepip```
+>[!WARNING]
+>Si vous étes sur Windows :
+>-  ```py -m ensurepip```
 
-Sinon :
-- ```python -m ensurepip```
+>[!WARNING]
+>Sinon :
+>- ```python -m ensurepip```
+
 Cela devrait ne rien si pip et bel et bien installé avec python sinon il sera installer (cette action ne nécésite pas internet pour être faite)
 
 Ensuite dans le même terminal (celui de python.exe) et installer la librairie Pycord 2.4 avec la commande suivante :
-Pour Windows :
-- ```py -m pip install py-cord==2.4```
 
-Et pour UNIX/MacOS :
-- ```python -m pip install py-cord==2.4```
+>[!WARNING]
+>Pour Windows :
+>- ```py -m pip install py-cord==2.4```
+
+>[!WARNING]
+>Et pour UNIX/MacOS :
+>- ```python -m pip install py-cord==2.4```
 
 Il ne vous reste plus qu'a lancer le fichier `main.py` dans le dossier 
 
