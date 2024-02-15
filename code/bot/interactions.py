@@ -98,7 +98,7 @@ class GarooUI(View):
 class GarooVote(GarooUI):
     """Une sous-classe de GarooUI, configurée pour organiser un vote."""
 
-    def __init__(self, entries: list[int], filter: list[int], weight: dict[int, int] = {}, **kwargs) -> None:
+    def __init__(self,  entries: list[tuple[str, int]], filter: list[int], weight: dict[int, int] = {}, **kwargs) -> None:
         """
         Paramètres
         ----------
@@ -110,13 +110,15 @@ class GarooVote(GarooUI):
             Dictionnaire sous la forme `{id_joueur: poids}` où `poids` est le poids du vote du joueur.
         """
         # Liste des noms des joueurs à partir de la liste des id
-        names = entries.copy() # [self.message.guild.get_member(id).nick for id in entries]
-        options = [SelectOption(label=str(name), value=str(id)) for name, id in zip(names, entries)]
-
+        # [self.message.guild.get_member(id).nick for id in entries]
+        options = [SelectOption(label=str(name), value=str(id)) for name, id in entries]
+        entries_names = [name for name, id in entries]
+        entries_id = [id for name,id in entries]
+        print(entries_names)
         super().__init__(Select(options=options), filter=filter, **kwargs)
         self.weight = weight
         self.voted_list: list[int] = []
-        self.votes = {k: 0 for k in names}
+        self.votes = {k: 0 for k in entries_id}
 
     async def interaction_check(self, interaction: Interaction) -> bool:
         user_id = interaction.user.id
@@ -129,7 +131,8 @@ class GarooVote(GarooUI):
         elif user_id not in self.voted_list:
             entry = int(self.children[0].values[0])
             self.voted_list.append(user_id)
-            self.votes[entry] += self.weight.get(user_id, 1)
+            self.votes[entry] += (
+                self.weight.get(user_id, 1))
             await interaction.response.send_message("✅ Vous avez voté.", ephemeral=True)
 
         else:
@@ -210,7 +213,9 @@ class GarooClient:
             L'utilisateur associé à l'identifiant.
             Renvoie `None` si l'identifiant est invalide.
         """
-        return self.client.get_user(id)
+        return self.client.loop.run_until_complete(
+            self.client.fetch_user(id)
+        )
 
     def send(self, content: str, dest: Union[TextChannel, User] = None) -> None:
         """Envoie un message.
