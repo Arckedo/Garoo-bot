@@ -1,4 +1,4 @@
-from discord import Client, User, SelectOption, TextChannel
+from discord import Client, User, SelectOption, TextChannel, Thread
 from discord.interactions import Interaction
 from discord.ui import Button, Select, View
 from typing import Any, Optional, Union
@@ -181,7 +181,12 @@ class GarooChoose(GarooUI):
 class GarooClient:
     """Représente un client Discord utilisable par le jeu."""
 
-    def __init__(self, client: Client, channel: TextChannel, werewolf_channel: TextChannel) -> None:
+    def __init__(
+        self,
+        client: Client,
+        channel: TextChannel,
+        werewolf_channel: Optional[TextChannel] = None
+    ) -> None:
         """
         Paramètres
         ----------
@@ -196,12 +201,30 @@ class GarooClient:
         self.channel = channel
         self.werewolf_channel = werewolf_channel
 
-    def get_user(self, id: int) -> Optional[User]:
+    async def setup_werewolf_channel(self, werewolf_ids: list[int]) -> Thread:
+        """Crée et configure un salon pour le rôle loup-garou.
+
+        Paramètres
+        ----------
+        player_list : `list[int]`
+            La liste des identifiants des utilisateurs à ajouter au salon.
+
+        Retourne
+        --------
+        `Thread`
+            Le salon créé.
+        """
+        channel =await self.channel.create_thread(name="loups-garous")
+        self.werewolf_channel = channel
+        for player in werewolf_ids:
+            await channel.add_user(self.get_user(player))
+
+    def get_user(self, user_id: int) -> Optional[User]:
         """Récupère un membre à partir d'un identifiant Discord.
 
         Paramètres
         ----------
-        id : `int`
+        user_id : `int`
             L'identifiant Discord de l'utilisateur.
 
         Retourne
@@ -210,7 +233,7 @@ class GarooClient:
             L'utilisateur associé à l'identifiant.
             Renvoie `None` si l'identifiant est invalide.
         """
-        return self.client.get_user(id)
+        return self.client.loop.run_until_complete(self.client.get_or_fetch_user(user_id))
 
     def send(self, content: str, dest: Union[TextChannel, User] = None) -> None:
         """Envoie un message.
