@@ -14,8 +14,8 @@ Voici la structure du côté Pure-Jeu:
 
 # Comment utiliser Garoo-bot ?
 Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
-
-Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction (installer maintenant) et gardez la localisation (dans un bloc-note où application de ce genre).
+>[!IMPORTANT]
+>Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction (installer maintenant) et gardez la localisation (dans un bloc-note où application de ce genre).
 
 Puis une fois l'installation terminée. Vérrifier d'abord si vous avez pip (utilisé pour installer les bibliothèque pour faire fonctionner le bot).
 
@@ -35,7 +35,7 @@ Pour Windows :
 Et pour UNIX/MacOS :
 - ```python -m pip install py-cord==2.4```
 
-Il ne vous reste plus qu'a lancer le fichier `main.py`
+Il ne vous reste plus qu'a lancer le fichier `main.py` dans le dossier 
 
 # Specs
 - Python 3.11.7
