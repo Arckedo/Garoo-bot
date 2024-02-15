@@ -25,7 +25,7 @@ class Werewolf(_Role):
 
         stop = False
         while stop == False:
-            interface = GarooVote(entries=self.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
+            interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
             dico_vote = game.client.send_interface("Place au vote des Loups AWOUUUUUU !",interface)
             print(dico_vote)
             
