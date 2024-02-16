@@ -1,4 +1,4 @@
-from discord import Client, User, SelectOption, TextChannel, Thread
+from discord import Client, User, SelectOption, TextChannel, Thread, Embed
 from discord.interactions import Interaction
 from discord.ui import Button, Select, View
 from typing import Any, Optional, Union
@@ -27,6 +27,11 @@ self.client.send("Message", dest=self.client.werewolf_channel)
 member = self.client.get_member(...)
 self.client.send("Message", dest=member)
 """
+class GarooEmbed(Embed):
+    """Représente un embed pour interagir avec les joueurs."""
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
 
 
 class GarooButton(Button):
@@ -280,3 +285,18 @@ class GarooClient:
         task = self.__send_interface(content, interface, dest)
         self.client.loop.run_until_complete(task)
         return interface.get_value()
+    
+    def send_embed(self,*, dest: Union[TextChannel, User] = None,**kwargs) -> None:
+        """Envoie un embed.
+
+        Paramètres
+        ----------
+        dest: `Union[TextChannel, User]`
+            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
+            envoyé dans le salon `channel` lié à l'objet.
+        **kwargs : `Any`
+            Les paramètres de l'embed.
+        """
+        dest = dest or self.channel
+        embed= GarooEmbed(**kwargs)
+        self.client.loop.run_until_complete(dest.send(embed=embed))

@@ -3,7 +3,8 @@ from roles import *
 from bot.interactions import GarooClient
 from bot.interactions import GarooVote
 
-
+from bot.interactions import GarooEmbed
+from discord import Colour
 
 class Game:
     def __init__(self, client: GarooClient, id_list: list, start_role_list:list, turn_count:int, role_list:list = None):
@@ -179,6 +180,9 @@ class Game:
                 else:
                     self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !")
                             
+        self.client.send_embed(title="Test",
+            description="Cliquez sur **TIKITAKA** pour commencer la partie.",
+            colour=Colour.green())
         
 
         if self.turn_count == 0:

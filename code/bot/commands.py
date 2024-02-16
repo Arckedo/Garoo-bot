@@ -5,7 +5,7 @@ from bot.interactions import GarooClient
 import asyncio
 
 # Nombre minimum de joueurs pour commencer une partie
-MINIMUM_PLAYERS = 1
+MINIMUM_PLAYERS = 3
 
 
 class StartEmbed(Embed):
@@ -68,7 +68,7 @@ class GarooCommands(Cog):
         game = Game(client, id_list, role_list, turn_count=0)
 
         # /!\ PLACEHOLDER : id de Rag
-        await client.setup_werewolf_channel([576435921390403623])
+        await client.setup_werewolf_channel([508005660516941824])
 
         await ctx.respond("La partie a été créée et débutera sous peu.")
         for id,role in game.dic_role_sort().items():
