@@ -65,7 +65,7 @@ class GarooCommands(Cog):
         #id_list = [508005660516941824, 1204803272347619474, 663518185068429332]
         id_list = [p.id for p in view.player_list]
         role_list = ["werewolf", "villager", "villager"]
-        game = Game(client, id_list, role_list, turn_count=0)
+        game = Game(client, id_list, role_list, turn_count=0, game_creator=ctx.author.id)
 
         # /!\ PLACEHOLDER : id de Rag
         await client.setup_werewolf_channel([508005660516941824])

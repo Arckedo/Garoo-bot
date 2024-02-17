@@ -2,12 +2,10 @@ import random
 from roles import *
 from bot.interactions import GarooClient
 from bot.interactions import GarooVote
-
-from bot.interactions import GarooEmbed
-from discord import Colour
+from datetime import datetime
 
 class Game:
-    def __init__(self, client: GarooClient, id_list: list, start_role_list:list, turn_count:int, role_list:list = None):
+    def __init__(self, client: GarooClient, id_list: list, start_role_list:list, turn_count:int, game_creator: int, role_list:list = None):
         """
         Initialise la partie avec les paramètres fournis.
 
@@ -25,6 +23,7 @@ class Game:
         self.id_list = id_list
         self.turn_count = turn_count
         self.mayor_id = None
+        self.game_creator = game_creator
 
 
         # Si la role_list n'est pas encore définie, trie les rôles pour les mettre dans l'ordre de passage
@@ -122,8 +121,16 @@ class Game:
                 stop = False
                 while stop == False:
                     interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive , weight={self.mayor_id : 2})
-                    dico_vote = self.client.send_interface("> Place au vote des villageois !\n> ABAT LES LOUPS !",interface)
                     
+                    dico_vote = self.game_embed_interface(interface=interface,
+                    title="⚖️ __Le Jugement de Thiercelieux__ ⚖️",
+                    description = """Au crépuscule à Thiercelieux, les villageois se rassemblent en cercle, scrutant les visages avec suspicion. 
+                    Chacun accuse et vote pour celui qu'il croit être un loup-garou. Les cœurs battent la chamade alors que le verdict se profile. 
+                    La tension est à son comble jusqu'à ce que le nom du condamné soit prononcé,
+                    scellant le destin du village pour cette nuit-là.""",
+                    thumbnail =  {"url" : "https://th.bing.com/th/id/OIG3.Oyo.LIt40eLhGtoZU0T_?w=1024&h=1024&rs=1&pid=ImgDetMain"}
+                    )
+
                     #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
                     max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
         
@@ -164,7 +171,7 @@ class Game:
             while stop == False:
                 interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive)
                 dico_vote = self.client.send_interface("> Place au vote du Maire !",interface)
-                
+
                 #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
                 max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
     
@@ -179,10 +186,6 @@ class Game:
                                 self.mayor_id = player.id
                 else:
                     self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !")
-                            
-        self.client.send_embed(title="Test",
-            description="Cliquez sur **TIKITAKA** pour commencer la partie.",
-            colour=Colour.green())
         
 
         if self.turn_count == 0:
@@ -257,6 +260,39 @@ class Game:
                 lst.append((self.client.get_user(player_id).display_name, player_id))
             
             return lst
+    
+    def game_embed(self, day=True,**kwargs):
+        if day == True:
+            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
+        else:
+            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://static.vecteezy.com/ti/vecteur-libre/p1/5569430-lune-nuit-clair-de-lune-minuit-icone-solide-illustrationle-modele-de-logo-adapte-a-de-nombreux-usages-gratuit-vectoriel.jpg"}
+
+        
+        return self.client.send_embed(
+        author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+        colour= 0x6c58ff,
+        footer=footer,
+        timestamp= datetime.now(),
+        **kwargs       
+        )        
+
+
+    def game_embed_interface(self,interface,day=True, **kwargs):
+        if day == True:
+            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
+        else:
+            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://static.vecteezy.com/ti/vecteur-libre/p1/5569430-lune-nuit-clair-de-lune-minuit-icone-solide-illustrationle-modele-de-logo-adapte-a-de-nombreux-usages-gratuit-vectoriel.jpg"}
+
+        
+        return self.client.send_embed_interface(interface=interface ,
+        author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+        colour= 0x6c58ff,
+        footer=footer,
+        timestamp= datetime.now(),
+        **kwargs       
+        )
+        
+
 """
 if __name__ == "__main__":
     id_list = [1, 2, 3, 4, 5]

@@ -31,7 +31,16 @@ class GarooEmbed(Embed):
     """Représente un embed pour interagir avec les joueurs."""
 
     def __init__(self, **kwargs) -> None:
+        if "author" in kwargs:
+            super().set_author(**kwargs.pop("author"))
+        if "footer" in kwargs:
+            super().set_footer(**kwargs.pop("footer"))
+        if "thumbnail" in kwargs:
+            super().set_thumbnail(**kwargs.pop("thumbnail"))
+        if "image" in kwargs:
+            super().set_image(**kwargs.pop("image"))
         super().__init__(**kwargs)
+
 
 
 class GarooButton(Button):
@@ -300,3 +309,27 @@ class GarooClient:
         dest = dest or self.channel
         embed= GarooEmbed(**kwargs)
         self.client.loop.run_until_complete(dest.send(embed=embed))
+
+    async def __send_embed_interface(self, embed: GarooEmbed, view: GarooUI, dest: Union[TextChannel, User]) -> None:
+        event = asyncio.Event()
+        view.setup_event(event)
+        asyncio.create_task(dest.send(embed=embed, view=view))
+        await event.wait()
+
+    def send_embed_interface(self,*, interface: GarooUI, dest: Union[TextChannel, User] = None, **kwargs) -> None:
+        """Envoie un embed contenant une interface.
+        
+        Paramètres
+        ----------
+        interface: `GarooUI`
+            L'interface à envoyer.
+        dest: `Union[TextChannel, User]`
+            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
+            envoyé dans le salon `channel` lié à l'objet.
+        **kwargs : `Any`
+            Les paramètres de l'embed."""
+        embed= GarooEmbed(**kwargs)
+        dest = dest or self.channel
+        task = self.__send_embed_interface(embed, interface, dest)
+        self.client.loop.run_until_complete(task)
+        return interface.get_value()
