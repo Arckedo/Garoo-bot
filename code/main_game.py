@@ -77,6 +77,16 @@ class Game:
                     if role_class == type(role):
                         role.player_list.append(Player(id=player_id, is_alive=True))
         
+        for role in self.role_list:
+            for player in role.lst_player:
+                embed=GarooEmbed(
+                    title = f"**{role}**",
+                    description = role.description,
+                    color = Colour.gold(),
+                    thumbnail = {"url" : role.image})
+                dest = self.client.get_user(player.id)
+                self.client.send(embed=embed, dest=dest)
+        
 
 
     def _turn(self):
@@ -387,8 +397,7 @@ class Game:
                       "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"}
 
         embed= GarooEmbed(
-            author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}",
-            "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+            author = {"name": f"Partie de {self.client.get_user(self.game_creator).display_name}"},
             colour= 0x6c58ff,
             footer=footer,
             timestamp= datetime.now(),

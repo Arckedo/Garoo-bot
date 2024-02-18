@@ -1,5 +1,6 @@
 
 from bot.interactions import GarooVote, GarooEmbed
+from discord import Colour
 
 class Player:
     def __init__(self, id):
@@ -8,15 +9,18 @@ class Player:
 
 
 class _Role:
-    def __init__(self, lst_player : list[Player], image_link: str):
+    def __init__(self, lst_player : list[Player], image_link: str,description):
         self.lst_player = lst_player
         self.image=image_link
+        self.description = description
 
     def send_embed_role(self, game, **kwargs):
         embed=GarooEmbed(
-            title="",
-            description="",
+            thumbnail = {"url" : self.image},
+            colour = 0x491e43,
             image=self.image,
+            footer = {"text" : f"Nuit {game.turn_count} - {len(game.alive_sort())}/{len(game.id_list)} joueurs en vie",
+                      "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"},
             **kwargs)
         game.client.send(embed=embed)
 
@@ -32,8 +36,10 @@ class _Role:
 #region Roles
 
 class Werewolf(_Role):
-    def __init__(self, lst_player, image_link=""):
-        super().__init__(lst_player,image_link)
+    def __init__(self, lst_player):
+        super().__init__(lst_player,
+                         image_link="https://th.bing.com/th/id/OIG2.Dz6c9oWL5O98Mv4Vw7.S?w=1024&h=1024&rs=1&pid=ImgDetMain",
+                         description="Le loup-garou est un être nocturne qui se cache parmi les villageois et qui cherche à éliminer ces derniers pour assurer sa survie.")
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
@@ -61,10 +67,16 @@ class Werewolf(_Role):
                 self.night_action(game)
         #--------------------------
 
+    def __str__(self) -> str:
+        return "Loup-Garou"
 class Villager(_Role):
-    def __init__(self, lst_player,image_link=""):
-        super().__init__(lst_player,image_link)
-
+    def __init__(self, lst_player):
+        super().__init__(lst_player,
+                         image_link="https://th.bing.com/th/id/OIG4.iSx9lSZEfEWqvQCnPEnb?w=1024&h=1024&rs=1&pid=ImgDetMain",
+                         description="Les villageois sont des habitants ordinaires de Thiercelieux qui doivent identifier et éliminer les loups-garous pour sauver leur village.")
+    
+    def __str__(self) -> str:
+        return "Villageois"
 
 
 class Seer(_Role):
@@ -102,7 +114,9 @@ class Hunter(_Role):
 
 class Thief(_Role):
     def __init__(self, lst_player):
-        super().__init__(lst_player,"https://th.bing.com/th/id/OIG4..mnb0SNFkMEkCbq.fqsw?pid=ImgGn")
+        super().__init__(lst_player,
+                         image_link="https://th.bing.com/th/id/OIG4..mnb0SNFkMEkCbq.fqsw?pid=ImgGn",
+                         description="Le voleur est un personnage qui a le pouvoir de voler le rôle d'un autre joueur pendant la nuit.")
 
 
     def night_action(self,game = None):
@@ -117,7 +131,24 @@ class Thief(_Role):
             for role in game.role_list:
                 for player in role.lst_player:
                     if player.id == max_keys[0]:
+
                         player.id, self.lst_player[0].id = self.lst_player[0].id, player.id  
+                        
+                        embed=GarooEmbed(
+                            title = f"**{role}**",
+                            description = role.description,
+                            color = Colour.gold(),
+                            thumbnail = {"url" : role.image})
+                        dest = game.client.get_user(player.id)
+                        game.client.send(content="Le voleur a volé ! Voici ton nouveau role:",embed=embed, dest=dest)
+
+                        embed=GarooEmbed(
+                            title = f"**{self}**",
+                            description = self.description,
+                            color = Colour.gold(),
+                            thumbnail = {"url" : self.image})
+                        dest = game.client.get_user(self.lst_player[0].id)
+                        game.client.send(content="Le voleur a volé ! Voici ton nouveau role :",embed=embed, dest=dest)                        
 
     def __str__(self) -> str:
         return "Voleur"
