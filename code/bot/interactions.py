@@ -266,7 +266,7 @@ class GarooClient:
         dest = dest or self.channel
         self.client.loop.run_until_complete(dest.send(content))
 
-    async def __send_interface(self, content: str, view: GarooUI, dest: Union[TextChannel, User]) -> None:
+    async def __send_interface(self, content: str = None,*,embed : GarooEmbed = None, view: GarooUI, dest: Union[TextChannel, User]) -> None:
         event = asyncio.Event()
         view.setup_event(event)
         asyncio.create_task(dest.send(content, view=view))

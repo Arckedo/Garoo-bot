@@ -106,7 +106,7 @@ class Game:
             self.game_embed(
                 title= f"🌅 __Jour {self.turn_count}__ 🌅",
                 thumbnail = {"url" : "https://th.bing.com/th/id/OIG2.OColV0JanmsfatOIhZge?pid=ImgGn"},
-                description = f"""L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(self.mention_lst(death))} 
+                description = f"""L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(f"{self.mention(player)} : {self.find_role(player)}" for player in death)} 
                 \nLes joueurs suivant ont été ressuscités cette nuit : {", ".join(self.mention_lst(resur))}"""
                 )
 
@@ -123,7 +123,7 @@ class Game:
                 # INTERACTION À REMPLACER (Front)
                 lst_alive = self.alive_sort()
 
-                interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive )#, weight={self.mayor_id : 2})
+                interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive ,weight={self.mayor_id : 2})
                 
                 dico_vote = self.game_embed_interface(interface=interface,
                 title="⚖️ __Le Jugement de Thiercelieux__ ⚖️",
@@ -155,12 +155,12 @@ class Game:
                                     mayor_vote(self)
                 else:
                     interface = GarooVote(entries=self.entries(max_keys) ,filter=[self.mayor_id])
-                    dico_vote = self.client.send_embed_interface(interface=interface,
+                    dico_vote = self.client.send_embed_interface(
+                        interface=interface,
                         title="⚖️ __Le Jugement du Maire__ ⚖️",
                         description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !"+
                         "\nLe maire va trancher le vote !",
-                        colour=Colour.orange()
-                        )
+                        colour=Colour.orange())
 
                     max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
 
@@ -216,13 +216,13 @@ class Game:
             while stop == False:
                 interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive)
                 
-                dico_vote = self.game_embed_interface(interface=interface,
+                dico_vote = self.game_embed_interface(
+                interface=interface,
                 title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
                 description = """À Thiercelieux, lors du vote pour le maire, les villageois se réunissent avec sérieux. 
                 Chacun exprime son choix avec attention. Les candidats font leurs discours, essayant de convaincre. 
                 Les votes sont déposés dans l'urne. Le nom du nouveau maire est annoncé, scellant ainsi le destin du village.""",
-                thumbnail =  {"url" : "https://th.bing.com/th/id/OIG2.7ICIfw0NlW2tpNZ8O0Eu?w=1024&h=1024&rs=1&pid=ImgDetMain"}
-                )
+                thumbnail =  {"url" : "https://th.bing.com/th/id/OIG2.7ICIfw0NlW2tpNZ8O0Eu?w=1024&h=1024&rs=1&pid=ImgDetMain"})
                 
 
                 #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
@@ -237,16 +237,14 @@ class Game:
                                 self.client.send_embed(
                                 title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
                                 description = f"Le Maire est {self.mention(player.id)} !",
-                                colour=Colour.green()
-                                )
+                                colour=Colour.green())
                                 stop = True
                                 self.mayor_id = player.id
                 else:
                     self.client.send_embed(
                         title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
                         description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !",
-                        colour=Colour.orange(),
-                        )
+                        colour=Colour.orange())
         
 
         if self.turn_count == 0:
@@ -262,8 +260,7 @@ class Game:
             self.client.send_embed(
                 title= f"🔥La Partie est terminée !",
                 description = winner,
-                colour = Colour.green()
-                )
+                colour = Colour.green())
             return    
 
         day_turn(self)
@@ -273,8 +270,7 @@ class Game:
             self.client.send_embed(
                 title= f"🔥La Partie est terminée !",
                 description = winner,
-                colour = Colour.green()
-                )
+                colour = Colour.green())
             return    
 
         self._turn()
@@ -327,6 +323,12 @@ class Game:
         self.alive_notif = self.alive_sort()
         return death, resur            
 
+    def find_role(self, player_id):
+        for role in self.role_list:
+            for player in role.lst_player:
+                if player.id == player_id:
+                    return role
+
     def name(self, player_id):
             return self.client.get_user(player_id).display_name    
 
@@ -367,7 +369,7 @@ class Game:
 
         
         return self.client.send_embed_interface(interface=interface ,
-        author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+        author = {"name": f"Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
         colour= 0x6c58ff,
         footer=footer,
         timestamp= datetime.now(),

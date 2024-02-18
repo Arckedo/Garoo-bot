@@ -9,14 +9,29 @@ class Player:
 
 
 class _Role:
-    def __init__(self, lst_player : list):
+    def __init__(self, lst_player : list[Player], image_link: str):
         self.lst_player = lst_player
+        self.image=image_link
 
+    def send_embed_role(self, game):
+        game.client.send_embed(
+            title="",
+            description="",
+            image=self.image
+        )
+
+    def send_embed_role_interface(self, game, interface,**kwargs):
+        return game.client.send_embed_interface(interface=interface,
+            thumbnail =  {"url" : self.image},
+            colour= 0x491e43,
+            footer = {"text" : f"Nuit {game.turn_count} - {len(game.alive_sort())}/{len(game.id_list)} joueurs en vie", "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"},
+            **kwargs
+        )
 #region Roles
 
 class Werewolf(_Role):
-    def __init__(self, lst_player):
-        super().__init__(lst_player)
+    def __init__(self, lst_player, image_link=""):
+        super().__init__(lst_player,image_link)
 
     def night_action(self,game):
         #INTERACTION A REMPLACER (Front)
@@ -45,8 +60,8 @@ class Werewolf(_Role):
         #--------------------------
 
 class Villager(_Role):
-    def __init__(self, lst_player):
-        super().__init__(lst_player)
+    def __init__(self, lst_player,image_link=""):
+        super().__init__(lst_player,image_link)
 
 
 
@@ -85,21 +100,32 @@ class Hunter(_Role):
 
 class Thief(_Role):
     def __init__(self, lst_player):
-        super().__init__(lst_player)
+        super().__init__(lst_player,"https://th.bing.com/th/id/OIG4..mnb0SNFkMEkCbq.fqsw?pid=ImgGn")
 
 
     def night_action(self,game = None):
-        #INTERACTION A REMPLACER (Front)
-        pass
-        #--------------------------
+        if game.turn_count == 1:
+            interface = GarooVote(entries=game.entries(game.alive_sort()) ,filter=[player.id for player in self.lst_player])
+            dico_vote = self.send_embed_role_interface(game=game, interface=interface,
+                title="Le Voleur",
+                description="Volez un joueur !",
+                )
+            print("Dico vote : ",dico_vote)
+            max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
+            for role in game.role_list:
+                for player in role.lst_player:
+                    if player.id == max_keys[0]:
+                        player.id, self.lst_player[0].id = self.lst_player[0].id, player.id  
 
+    def __str__(self) -> str:
+        return "Voleur"
 #endregion
 
 
-night_action_list = [Werewolf, Seer, Witch, Thief]
+night_action_list = [Thief, Werewolf, Seer, Witch]
 day_action_list = [Hunter]
 
-role_order = ["werewolf", "seer", "witch", "thief", "hunter", "villager"]
+role_order = ["thief", "werewolf", "seer", "witch", "hunter", "villager"]
 
 def role_order_sort(role):
     return role_order.index(role)
