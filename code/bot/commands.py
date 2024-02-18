@@ -30,10 +30,10 @@ class StartView(View):
         if not interaction.user in self.player_list:
             self.player_list.append(interaction.user)
             self.children[0].label = f"Rejoindre {len(self.player_list)}/{MINIMUM_PLAYERS}"
-            await interaction.response.send_message(embed= GarooEmbed(
+            await interaction.response.send_message(embed=GarooEmbed(
                 description = f"{interaction.user.mention} a rejoins la partie.",
                 colour = Colour.green()
-                ))
+            ))
 
         if len(self.player_list) >= MINIMUM_PLAYERS:
             self.children[0].disabled = True
@@ -72,12 +72,12 @@ class GarooCommands(Cog):
 
         await ctx.respond(embed = GarooEmbed(
             title="Partie de loup-garou créée !",
-            description="La partie démarrera sous peu avec les joueurs suivants : " 
-            + str(", ".join([player.mention for player in view.player_list]) + " !\n" 
+            description="La partie démarrera sous peu avec les joueurs suivants : "
+            + str(", ".join([player.mention for player in view.player_list]) + " !\n"
             + "Bonne chance a tous les joueurs !"),
             colour= Colour.green()
         ))
-        
+
         for id,role in game.dic_role_sort().items():
             print(f"Player {client.get_user(id).name} with role {[role]}")
         game._turn()
