@@ -27,6 +27,8 @@ self.client.send("Message", dest=self.client.werewolf_channel)
 member = self.client.get_member(...)
 self.client.send("Message", dest=member)
 """
+
+
 class GarooEmbed(Embed):
     """Représente un embed pour interagir avec les joueurs."""
 
@@ -40,7 +42,6 @@ class GarooEmbed(Embed):
         if "image" in kwargs:
             super().set_image(**kwargs.pop("image"))
         super().__init__(**kwargs)
-
 
 
 class GarooButton(Button):
