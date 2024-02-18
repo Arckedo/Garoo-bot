@@ -3,7 +3,7 @@ from roles import *
 from bot.interactions import GarooClient
 from bot.interactions import GarooVote
 from datetime import datetime
-
+from discord import Colour
 class Game:
     def __init__(self, client: GarooClient, id_list: list, start_role_list:list, turn_count:int, game_creator: int, role_list:list = None):
         """
@@ -83,17 +83,16 @@ class Game:
         """
         Effectue un tour de jeu.
         """
-        
-        # Vérifie si la condition de fin de jeu est atteinte
-        end , winner = self.end()
-        if end:
-            self.client.send("> La partie est finie.")
-            self.client.send(winner)
-            return
 
+        
         def night_turn(self):
             
-            self.client.send("> La nuit tombe sur Thiercelieux... \nNuit : " + str(self.turn_count))
+            self.game_embed(
+                day = False,
+                title= f"🌙 __Nuit {self.turn_count}__ 🌙",
+                thumbnail = {"url" : "https://th.bing.com/th/id/OIG2.3wENrtbwnfbEO5lMpuxI?w=1024&h=1024&rs=1&pid=ImgDetMain"},
+                description = f"""Bonne nuit à toutes et à tous !"""
+                )
             
             for role in self.role_list:
                 if type(role) in night_action_list:
@@ -102,13 +101,19 @@ class Game:
 
         def day_turn(self):
             
-            self.client.send("> Le jour se lève sur Thiercelieux...\n> Jour : " + str(self.turn_count))
-            
             death, resur = self.alive_notification()
-            self.client.send(f"> Les joueurs suivant sont morts cette nuit : {self.name_lst(death)} \n> Les joueurs suivant ont été ressucités cette nuit : {self.name_lst(resur)}")
+
+            self.game_embed(
+                title= f"🌅 __Jour {self.turn_count}__ 🌅",
+                thumbnail = {"url" : "https://th.bing.com/th/id/OIG2.OColV0JanmsfatOIhZge?pid=ImgGn"},
+                description = f"""L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(self.mention_lst(death))} 
+                \nLes joueurs suivant ont été ressuscités cette nuit : {", ".join(self.mention_lst(resur))}"""
+                )
 
             if self.mayor_id in death:
-                self.client.send(f"> Le Maire est Mort !")
+                self.game_embed(
+                    title= f"👑 __Le maire est mort__ 👑"
+                    )
                 mayor_vote(self)
             for role in self.role_list:
                 if type(role) in day_action_list:
@@ -118,37 +123,63 @@ class Game:
                 # INTERACTION À REMPLACER (Front)
                 lst_alive = self.alive_sort()
 
-                stop = False
-                while stop == False:
-                    interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive , weight={self.mayor_id : 2})
-                    
-                    dico_vote = self.game_embed_interface(interface=interface,
-                    title="⚖️ __Le Jugement de Thiercelieux__ ⚖️",
-                    description = """Au crépuscule à Thiercelieux, les villageois se rassemblent en cercle, scrutant les visages avec suspicion. 
-                    Chacun accuse et vote pour celui qu'il croit être un loup-garou. Les cœurs battent la chamade alors que le verdict se profile. 
-                    La tension est à son comble jusqu'à ce que le nom du condamné soit prononcé,
-                    scellant le destin du village pour cette nuit-là.""",
-                    thumbnail =  {"url" : "https://th.bing.com/th/id/OIG3.Oyo.LIt40eLhGtoZU0T_?w=1024&h=1024&rs=1&pid=ImgDetMain"}
-                    )
+                interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive )#, weight={self.mayor_id : 2})
+                
+                dico_vote = self.game_embed_interface(interface=interface,
+                title="⚖️ __Le Jugement de Thiercelieux__ ⚖️",
+                description = """Au crépuscule à Thiercelieux, les villageois se rassemblent en cercle, scrutant les visages avec suspicion. 
+                Chacun accuse et vote pour celui qu'il croit être un loup-garou. Les cœurs battent la chamade alors que le verdict se profile. 
+                La tension est à son comble jusqu'à ce que le nom du condamné soit prononcé,
+                scellant le destin du village pour cette nuit-là.""",
+                thumbnail =  {"url" : "https://th.bing.com/th/id/OIG3.Oyo.LIt40eLhGtoZU0T_?w=1024&h=1024&rs=1&pid=ImgDetMain"}
+                )
 
-                    #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
+                #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
+                max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
+    
+                
+                if len(max_keys) == 1:
+                    for role in self.role_list:
+                        for player in role.lst_player:
+                            if player.id == max_keys[0]:
+                                player.is_alive = False
+                                self.alive_notification()
+                                self.game_embed(
+                                    title = f"🔥 __{self.name(player.id)} est brulée sur la place de thercelieux!__ 🔥",
+                                    description = f"Son role était {role} !"
+                                    )
+                                if player.id == self.mayor_id:
+                                    self.game_embed(
+                                    title= f"👑 __Le maire est mort__ 👑"
+                                    )
+                                    mayor_vote(self)
+                else:
+                    interface = GarooVote(entries=self.entries(max_keys) ,filter=[self.mayor_id])
+                    dico_vote = self.client.send_embed_interface(interface=interface,
+                        title="⚖️ __Le Jugement du Maire__ ⚖️",
+                        description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !"+
+                        "\nLe maire va trancher le vote !",
+                        colour=Colour.orange()
+                        )
+
                     max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
-        
-                    
-                    if len(max_keys) == 1:
-                        for role in self.role_list:
-                            for player in role.lst_player:
-                                if player.id == max_keys[0]:
-                                    player.is_alive = False
-                                    self.alive_notification()
-                                    self.client.send(f"> {self.client.get_user(player.id)} est brulée sur la place de thercelieux!")
-                                    self.client.send(f"> Son role était {role} !")
-                                    if player.id == self.mayor_id:
-                                        self.client.send(f"> Le Maire est mort !")
-                                        mayor_vote(self)
-                                    stop = True 
-                    else:
-                        self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !\n> Il n'y aura aucun mort lors de se vote.")
+
+                    for role in self.role_list:
+                        for player in role.lst_player:
+                            if player.id == max_keys[0]:
+                                player.is_alive = False
+                                self.alive_notification()
+                                self.game_embed(
+                                    title = f"🔥 __{self.name(player.id)} est brulée sur la place de thercelieux!__ 🔥",
+                                    description = f"Son role était {role} !"
+                                    )
+                                if player.id == self.mayor_id:
+                                    self.game_embed(
+                                    title= f"👑 __Le maire est mort__ 👑"
+                                    )
+                                    mayor_vote(self)
+                            
+                        
             # Appel de la fonction de vote
             day_vote(self)
 
@@ -158,19 +189,41 @@ class Game:
             stop = False
             
             if self.mayor_id is not None:
-                interface = GarooVote(entries=lst_alive ,filter=[self.mayor_id])
-                dico_vote = self.client.send_interface("> L'ancien Maire doit choisir un sucesseur !",interface)
+                print()
+                print(lst_alive)
+                print([])
+                interface = GarooVote(entries=self.entries(lst_alive) ,filter=[self.mayor_id])
+                dico_vote = self.game_embed_interface(interface=interface,
+                title="⚖️ __L'héritage du maire de Thiercelieux__ ⚖️",
+                description = """
+                À Thiercelieux, lors de la succession du maire, 
+                les villageois se réunissent avec gravité. Chacun exprime ses choix, les candidats exposent leurs arguments.
+                Les votes sont recueillis, et le nom du successeur est annoncé, marquant ainsi un tournant pour le village.""",
+                thumbnail =  {"url" : "https://th.bing.com/th/id/OIG3.NTqM_6GH4PlXQHh1fkN8?w=1024&h=1024&rs=1&pid=ImgDetMain"}
+                )
                 for player in dico_vote:
                     if dico_vote[player] == 1:
-
-                        self.mayor__id = dico_vote
+                        self.client.send_embed(
+                        title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                        description = f"Le Maire est {self.mention(player)} !",
+                        colour=Colour.green()
+                        )
+                        self.mayor_id = player
                         stop = True
                 if stop == False:
                     mayor_vote(self)
 
             while stop == False:
                 interface = GarooVote(entries=self.entries(lst_alive) ,filter=lst_alive)
-                dico_vote = self.client.send_interface("> Place au vote du Maire !",interface)
+                
+                dico_vote = self.game_embed_interface(interface=interface,
+                title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                description = """À Thiercelieux, lors du vote pour le maire, les villageois se réunissent avec sérieux. 
+                Chacun exprime son choix avec attention. Les candidats font leurs discours, essayant de convaincre. 
+                Les votes sont déposés dans l'urne. Le nom du nouveau maire est annoncé, scellant ainsi le destin du village.""",
+                thumbnail =  {"url" : "https://th.bing.com/th/id/OIG2.7ICIfw0NlW2tpNZ8O0Eu?w=1024&h=1024&rs=1&pid=ImgDetMain"}
+                )
+                
 
                 #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
                 max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
@@ -181,11 +234,19 @@ class Game:
                         for player in role.lst_player:
                             if player.id == max_keys[0]:
                                 player.is_mayor = True
-                                self.client.send(f"> Le Maire est {self.name(player.id)} !")
+                                self.client.send_embed(
+                                title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                                description = f"Le Maire est {self.mention(player.id)} !",
+                                colour=Colour.green()
+                                )
                                 stop = True
                                 self.mayor_id = player.id
                 else:
-                    self.client.send(f"> Les joueurs suivants ont eu le même nombre de vote : {max_keys} !")
+                    self.client.send_embed(
+                        title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                        description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !",
+                        colour=Colour.orange(),
+                        )
         
 
         if self.turn_count == 0:
@@ -195,7 +256,27 @@ class Game:
         self.turn_count += 1
 
         night_turn(self)
+
+        end , winner = self.end()
+        if end:
+            self.client.send_embed(
+                title= f"🔥La Partie est terminée !",
+                description = winner,
+                colour = Colour.green()
+                )
+            return    
+
         day_turn(self)
+
+        end , winner = self.end()
+        if end:
+            self.client.send_embed(
+                title= f"🔥La Partie est terminée !",
+                description = winner,
+                colour = Colour.green()
+                )
+            return    
+
         self._turn()
 
 
@@ -210,15 +291,13 @@ class Game:
                     else :
                         villager += 1
         if wolf == 0 and villager == 0:
-            return True, "> **Les Arbres de la forets**, les Loups-Garous et les Villageois sont tous morts !"
+            return True, "**Les Arbres de la forets** ont gagné, les Loups-Garous et les Villageois sont tous morts !"
         elif wolf == 0:
-            return True, "> Les Loups-Garous sont tous morts, **Les villageois ont gagné !**"
+            return True, "Les Loups-Garous sont tous morts, **Les villageois ont gagné !**"
         elif villager == 0:
-            return True, "> Les Villageois sont tous morts, **Les Loups-Garous ont gagné !**"
+            return True, "Les Villageois sont tous morts, **Les Loups-Garous ont gagné !**"
         else:
-            return False, None
-
-
+            return False, None  
 
     def alive_sort(self):
         lst = []
@@ -250,10 +329,14 @@ class Game:
 
     def name(self, player_id):
             return self.client.get_user(player_id).display_name    
-    
+
+    def mention(self, player_id):
+            return self.client.get_user(player_id).mention
     def name_lst(self, lst):
             return [self.client.get_user(player_id).display_name for player_id in lst]
     
+    def mention_lst(self, lst):
+            return [self.client.get_user(player_id).mention for player_id in lst]    
     def entries(self, lst_entries):
             lst = []
             for player_id in lst_entries:
@@ -276,12 +359,11 @@ class Game:
         **kwargs       
         )        
 
-
     def game_embed_interface(self,interface,day=True, **kwargs):
         if day == True:
             footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
         else:
-            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://static.vecteezy.com/ti/vecteur-libre/p1/5569430-lune-nuit-clair-de-lune-minuit-icone-solide-illustrationle-modele-de-logo-adapte-a-de-nombreux-usages-gratuit-vectoriel.jpg"}
+            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"}
 
         
         return self.client.send_embed_interface(interface=interface ,

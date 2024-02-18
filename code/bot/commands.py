@@ -1,8 +1,9 @@
 from discord import ApplicationContext, Bot, ButtonStyle, Cog, Colour, Embed, Interaction, Member, User, slash_command
 from discord.ui import View, Button
 from main_game import Game
-from bot.interactions import GarooClient
+from bot.interactions import GarooClient , GarooEmbed
 import asyncio
+
 
 # Nombre minimum de joueurs pour commencer une partie
 MINIMUM_PLAYERS = 3
@@ -29,7 +30,10 @@ class StartView(View):
         if not interaction.user in self.player_list:
             self.player_list.append(interaction.user)
             self.children[0].label = f"Rejoindre {len(self.player_list)}/{MINIMUM_PLAYERS}"
-            await interaction.response.send_message(f"{interaction.user.mention} a rejoins la partie.")
+            await interaction.response.send_message(embed= GarooEmbed(
+                description = f"{interaction.user.mention} a rejoins la partie.",
+                colour = Colour.green()
+                ))
 
         if len(self.player_list) >= MINIMUM_PLAYERS:
             self.children[0].disabled = True
@@ -56,10 +60,6 @@ class GarooCommands(Cog):
         await view.event.wait()
 
         # Envoie la liste des participants quand la partie commence
-        await ctx.send(
-            "La partie commence avec les joueurs : "
-            + ", ".join([player.mention for player in view.player_list])
-        )
 
         client = GarooClient(self.bot, ctx.channel)
         #id_list = [508005660516941824, 1204803272347619474, 663518185068429332]
@@ -70,9 +70,16 @@ class GarooCommands(Cog):
         # /!\ PLACEHOLDER : id de Rag
         await client.setup_werewolf_channel([508005660516941824])
 
-        await ctx.respond("La partie a été créée et débutera sous peu.")
+        await ctx.respond(embed = GarooEmbed(
+            title="Partie de loup-garou créée !",
+            description="La partie démarrera sous peu avec les joueurs suivants : " 
+            + str(", ".join([player.mention for player in view.player_list]) + " !\n" 
+            + "Bonne chance a tous les joueurs !"),
+            colour= Colour.green()
+        ))
+        
         for id,role in game.dic_role_sort().items():
-            print(f"Player {id} with role {[role]}")
+            print(f"Player {client.get_user(id).name} with role {[role]}")
         game._turn()
 
 
