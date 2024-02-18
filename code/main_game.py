@@ -1,7 +1,7 @@
 import random
 from roles import *
 from bot.interactions import GarooClient
-from bot.interactions import GarooVote
+from bot.interactions import GarooVote, GarooEmbed
 from datetime import datetime
 from discord import Colour
 class Game:
@@ -155,12 +155,16 @@ class Game:
                                     mayor_vote(self)
                 else:
                     interface = GarooVote(entries=self.entries(max_keys) ,filter=[self.mayor_id])
-                    dico_vote = self.client.send_embed_interface(
-                        interface=interface,
+                    embed = GarooEmbed(
                         title="⚖️ __Le Jugement du Maire__ ⚖️",
                         description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !"+
                         "\nLe maire va trancher le vote !",
-                        colour=Colour.orange())
+                        colour=Colour.orange()                               
+                    )
+                    dico_vote = self.client.send_interface(
+                        interface=interface,
+                        embed=embed
+                        )
 
                     max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
 
@@ -203,11 +207,12 @@ class Game:
                 )
                 for player in dico_vote:
                     if dico_vote[player] == 1:
-                        self.client.send_embed(
+                        embed = GarooEmbed(
                         title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
                         description = f"Le Maire est {self.mention(player)} !",
-                        colour=Colour.green()
-                        )
+                        colour=Colour.green())
+
+                        self.client.send(embed= embed)
                         self.mayor_id = player
                         stop = True
                 if stop == False:
@@ -234,18 +239,23 @@ class Game:
                         for player in role.lst_player:
                             if player.id == max_keys[0]:
                                 player.is_mayor = True
-                                self.client.send_embed(
+                                
+                                embed= GarooEmbed(
                                 title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
                                 description = f"Le Maire est {self.mention(player.id)} !",
                                 colour=Colour.green())
+
+                                self.client.send(embed=embed)
                                 stop = True
                                 self.mayor_id = player.id
                 else:
-                    self.client.send_embed(
-                        title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
-                        description = "Les joueurs suivants ont eu le même nombre de vote : " + str(", ".join([self.mention(player) for player in max_keys])) + " !",
-                        colour=Colour.orange())
-        
+                    embed= GarooEmbed(
+                    title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                    description = "Les joueurs suivants ont eu le même nombre de vote : " + 
+                    str(", ".join([self.mention(player) for player in max_keys])) + " !",
+                    colour=Colour.orange())
+                    self.client.send(embed=embed)
+
 
         if self.turn_count == 0:
             # INTERACTION À REMPLACER (Front)
@@ -257,21 +267,26 @@ class Game:
 
         end , winner = self.end()
         if end:
-            self.client.send_embed(
+            embed= GarooEmbed(
                 title= f"🔥La Partie est terminée !",
                 description = winner,
                 colour = Colour.green())
+            
+            self.client.send(embed=embed)
             return    
 
         day_turn(self)
 
         end , winner = self.end()
         if end:
-            self.client.send_embed(
+            embed= GarooEmbed(
                 title= f"🔥La Partie est terminée !",
                 description = winner,
                 colour = Colour.green())
+            
+            self.client.send(embed=embed)
             return    
+  
 
         self._turn()
 
@@ -348,33 +363,39 @@ class Game:
     
     def game_embed(self, day=True,**kwargs):
         if day == True:
-            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
+            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie",
+                      "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
         else:
-            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://static.vecteezy.com/ti/vecteur-libre/p1/5569430-lune-nuit-clair-de-lune-minuit-icone-solide-illustrationle-modele-de-logo-adapte-a-de-nombreux-usages-gratuit-vectoriel.jpg"}
+            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", 
+                      "icon_url" : "https://static.vecteezy.com/ti/vecteur-libre/p1/5569430-lune-nuit-clair-de-lune-minuit-icone-solide-illustrationle-modele-de-logo-adapte-a-de-nombreux-usages-gratuit-vectoriel.jpg"}
 
-        
-        return self.client.send_embed(
-        author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
-        colour= 0x6c58ff,
-        footer=footer,
-        timestamp= datetime.now(),
-        **kwargs       
-        )        
+        embed= GarooEmbed(
+            author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}", 
+            "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+            colour= 0x6c58ff,
+            footer=footer,
+            timestamp= datetime.now(),
+            **kwargs)                    
+        return self.client.send(embed=embed)        
 
     def game_embed_interface(self,interface,day=True, **kwargs):
         if day == True:
-            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
+            footer = {"text" : f"Jour {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", 
+                      "icon_url" : "https://media.istockphoto.com/id/1210517109/vector/sun-icon-vector-for-your-web-design-logo-ui-illustration.jpg?s=612x612&w=0&k=20&c=-HOJe8OyVmap1_0NDUotr2vjZ3TxVKCGA2ga9H7klvU="}
         else:
-            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"}
+            footer = {"text" : f"Nuit {self.turn_count} - {len(self.alive_sort())}/{len(self.id_list)} joueurs en vie", 
+                      "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"}
 
-        
-        return self.client.send_embed_interface(interface=interface ,
-        author = {"name": f"Partie de {self.client.get_user(self.game_creator).display_name}", "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
-        colour= 0x6c58ff,
-        footer=footer,
-        timestamp= datetime.now(),
-        **kwargs       
-        )
+        embed= GarooEmbed(
+            author = {"name": f"GarooBot - Partie de {self.client.get_user(self.game_creator).display_name}",
+            "icon_url": "https://cdn.discordapp.com/avatars/1194956794812964874/029a2286b5d3df9632402b7db7336a71.webp?size=80"},
+            colour= 0x6c58ff,
+            footer=footer,
+            timestamp= datetime.now(),
+            **kwargs)
+
+        return self.client.send_interface(interface=interface ,
+        embed=embed)
         
 
 """

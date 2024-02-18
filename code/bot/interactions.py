@@ -252,7 +252,7 @@ class GarooClient:
         """
         return self.client.loop.run_until_complete(self.client.get_or_fetch_user(user_id))
 
-    def send(self, content: str, dest: Union[TextChannel, User] = None) -> None:
+    def send(self, content: str= None,embed: GarooEmbed = None, dest: Union[TextChannel, User] = None) -> None:
         """Envoie un message.
 
         Paramètres
@@ -264,15 +264,15 @@ class GarooClient:
             envoyé dans le salon `channel` lié à l'objet.
         """
         dest = dest or self.channel
-        self.client.loop.run_until_complete(dest.send(content))
+        self.client.loop.run_until_complete(dest.send(content=content,embed=embed))
 
-    async def __send_interface(self, content: str = None,*,embed : GarooEmbed = None, view: GarooUI, dest: Union[TextChannel, User]) -> None:
+    async def __send_interface(self, content: str = None,*, embed : GarooEmbed = None, view: GarooUI, dest: Union[TextChannel, User]) -> None:
         event = asyncio.Event()
         view.setup_event(event)
-        asyncio.create_task(dest.send(content, view=view))
+        asyncio.create_task(dest.send(content,embed=embed, view=view))
         await event.wait()
 
-    def send_interface(self, content: str, interface: GarooUI, dest: Union[TextChannel, User] = None) -> None:
+    def send_interface(self, content: str = None, embed:GarooEmbed = None,*, interface: GarooUI, dest: Union[TextChannel, User] = None) -> None:
         """Envoie un message contenant une interface.
 
         Paramètres
@@ -291,45 +291,6 @@ class GarooClient:
             La valeur associée à l'interface une fois l'interaction achevée.
         """
         dest = dest or self.channel
-        task = self.__send_interface(content, interface, dest)
-        self.client.loop.run_until_complete(task)
-        return interface.get_value()
-    
-    def send_embed(self,*, dest: Union[TextChannel, User] = None,**kwargs) -> None:
-        """Envoie un embed.
-
-        Paramètres
-        ----------
-        dest: `Union[TextChannel, User]`
-            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
-            envoyé dans le salon `channel` lié à l'objet.
-        **kwargs : `Any`
-            Les paramètres de l'embed.
-        """
-        dest = dest or self.channel
-        embed= GarooEmbed(**kwargs)
-        self.client.loop.run_until_complete(dest.send(embed=embed))
-
-    async def __send_embed_interface(self, embed: GarooEmbed, view: GarooUI, dest: Union[TextChannel, User]) -> None:
-        event = asyncio.Event()
-        view.setup_event(event)
-        asyncio.create_task(dest.send(embed=embed, view=view))
-        await event.wait()
-
-    def send_embed_interface(self,*, interface: GarooUI, dest: Union[TextChannel, User] = None, **kwargs) -> None:
-        """Envoie un embed contenant une interface.
-        
-        Paramètres
-        ----------
-        interface: `GarooUI`
-            L'interface à envoyer.
-        dest: `Union[TextChannel, User]`
-            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
-            envoyé dans le salon `channel` lié à l'objet.
-        **kwargs : `Any`
-            Les paramètres de l'embed."""
-        embed= GarooEmbed(**kwargs)
-        dest = dest or self.channel
-        task = self.__send_embed_interface(embed, interface, dest)
+        task = self.__send_interface(content = content,embed= embed,view = interface,dest= dest)
         self.client.loop.run_until_complete(task)
         return interface.get_value()

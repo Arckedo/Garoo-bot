@@ -1,6 +1,5 @@
 
-from bot.interactions import GarooVote
-
+from bot.interactions import GarooVote, GarooEmbed
 
 class Player:
     def __init__(self, id):
@@ -13,20 +12,23 @@ class _Role:
         self.lst_player = lst_player
         self.image=image_link
 
-    def send_embed_role(self, game):
-        game.client.send_embed(
+    def send_embed_role(self, game, **kwargs):
+        embed=GarooEmbed(
             title="",
             description="",
-            image=self.image
-        )
+            image=self.image,
+            **kwargs)
+        game.client.send(embed=embed)
 
     def send_embed_role_interface(self, game, interface,**kwargs):
-        return game.client.send_embed_interface(interface=interface,
-            thumbnail =  {"url" : self.image},
-            colour= 0x491e43,
-            footer = {"text" : f"Nuit {game.turn_count} - {len(game.alive_sort())}/{len(game.id_list)} joueurs en vie", "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"},
-            **kwargs
-        )
+        embed = GarooEmbed(
+            thumbnail = {"url" : self.image},
+            colour = 0x491e43,
+            footer = {"text" : f"Nuit {game.turn_count} - {len(game.alive_sort())}/{len(game.id_list)} joueurs en vie", 
+                      "icon_url" : "https://img.freepik.com/vecteurs-premium/croissant-etoiles-icone-noire-au-clair-lune-symbole-reve-isole-fond-blanc_53562-22909.jpg"},
+                      **kwargs)
+        
+        return game.client.send_interface(interface=interface, embed=embed)
 #region Roles
 
 class Werewolf(_Role):
@@ -41,7 +43,7 @@ class Werewolf(_Role):
         stop = False
         while stop == False:
             interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
-            dico_vote = game.client.send_interface("Place au vote des Loups AWOUUUUUU !",interface)
+            dico_vote = game.client.send_interface(content ="Place au vote des Loups AWOUUUUUU !",interface=interface)
             print(dico_vote)
             
             #Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
