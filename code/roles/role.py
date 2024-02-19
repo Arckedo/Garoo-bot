@@ -87,7 +87,20 @@ class Seer(_Role):
     def night_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        pass
+        lst_alive = game.alive_sort()
+        interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
+        dico_vote = game.client.send_interface("Veuillez choisir le joueur ou la joueuse dont vous voullez voir le rôle.",interface)
+
+        max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
+
+        for role in game.role_list:
+            for player in role.lst_player:
+                if player.id == max_keys[0]:
+                    user = self.client.get_user(self.id)
+                    self.client.send("Voici le rôle de " + str(player) + " :" + str(player.role), dest = user)
+
+
+        
         #--------------------------
 
 class Witch(_Role):
@@ -109,8 +122,23 @@ class Hunter(_Role):
     def day_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        pass
+        lst_alive = game.alive.sort()
+
+
+        interface = GarooVote(entries=game.entries(lst_alive), filter=[player.id for player in self.lst_player])
+        dico_vote = game.client.send_interface("Tu as été tué.e ! Il est temps de te venger !!!", interface)
+        print(dico_vote)
+
+        max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
+        
+        
+        for role in game.role_list:
+            for player in role.lst_player:
+                if player.id == max_keys[0]:
+                    player.is_alive = False 
+
         #--------------------------
+
 
 class Thief(_Role):
     def __init__(self, lst_player):
