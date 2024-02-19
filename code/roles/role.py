@@ -154,6 +154,11 @@ class Thief(_Role):
         return "Voleur"
 #endregion
 
+
+
+night_action_list = [Werewolf, Seer, Witch, Thief]
+day_action_list = [Hunter]
+
 role_order = ["thief", "werewolf", "seer", "witch", "hunter", "villager"]
 
 def role_order_sort(role):
