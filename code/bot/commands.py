@@ -9,16 +9,13 @@ from discord import (
     Member,
     User,
     slash_command,
+    option
 )
 from discord.ui import View, Button
 from main_game import Game
 from bot.interactions import GarooClient, GarooEmbed
 import asyncio
 
-
-# Nombre minimum de joueurs pour commencer une partie
-MINIMUM_PLAYERS = 3
-MAXIMUM_PLAYERS = 10
 
 
 class StartEmbed(Embed):
@@ -69,15 +66,9 @@ class GarooCommands(Cog):
         self.bot: Bot = bot
 
     @slash_command(name="loupgarou")
-    async def new_game(
-        self, ctx: ApplicationContext, minimum_players: int = MINIMUM_PLAYERS
-    ):
+    @option("minimum_players", description="Nombre de joueurs minimum", default=3, min_value=3, max_value=10)
+    async def new_game(self, ctx: ApplicationContext, minimum_players: int = 3):
         """Démarre une nouvelle partie de Loup-Garou 🐺"""
-        # Veille à ce que le nombre de joueurs soit compris entre MINIMUM_PLAYERS et MAXIMUM_PLAYERS
-        if minimum_players < MINIMUM_PLAYERS:
-            minimum_players = MINIMUM_PLAYERS
-        elif minimum_players > MAXIMUM_PLAYERS:
-            minimum_players = MAXIMUM_PLAYERS
 
         # Crée l'interface, puis l'envoie et attend les résultats
         embed = StartEmbed(ctx.author)
@@ -102,7 +93,7 @@ class GarooCommands(Cog):
             embed=GarooEmbed(
                 title="Partie de loup-garou créée !",
                 description="La partie démarrera sous peu avec les joueurs suivants : "
-                + str(
+                 + str(
                     ", ".join([player.mention for player in view.player_list])
                     + " !\n"
                     + "Bonne chance a tous les joueurs !"
