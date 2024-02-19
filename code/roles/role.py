@@ -110,7 +110,10 @@ class Seer(_Role):
     def __init__(self, lst_player):
         super().__init__(lst_player)
 
-    def night_action(self, game):
+    
+    def night_action(self,game = None):
+        #INTERACTION A REMPLACER (Front)
+        #--------------------------
         lst_alive = game.alive_sort()
         interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
         dico_vote = game.client.send_interface("Veuillez choisir le joueur ou la joueuse dont vous voullez voir le rôle.",interface)
@@ -125,8 +128,7 @@ class Seer(_Role):
 
 
         
-
-
+        #--------------------------
 
 class Witch(_Role):
     def __init__(self, lst_player):
@@ -205,7 +207,10 @@ class Hunter(_Role):
     def __init__(self, lst_player):
         super().__init__(lst_player)
 
-    def day_action(self, game=None):
+        
+    def day_action(self,game = None):
+        #INTERACTION A REMPLACER (Front)
+        #--------------------------
         lst_alive = game.alive.sort()
 
 
@@ -220,6 +225,8 @@ class Hunter(_Role):
             for player in role.lst_player:
                 if player.id == max_keys[0]:
                     player.is_alive = False 
+
+        #--------------------------
 
 
 class Thief(_Role):
