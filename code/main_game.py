@@ -353,6 +353,7 @@ class Game:
             return [self.client.get_user(player_id).mention for player_id in lst]
 
     def entries(self, lst_entries):
+            lst_entries.sort()
             lst = []
             for player_id in lst_entries:
                 lst.append((self.client.get_user(player_id).display_name, player_id))
