@@ -12,14 +12,15 @@ bot = discord.Bot(intents=intents)
 # Les serveurs discord dans lesquels le bot créera des slash commands
 bot.debug_guilds = [1194944354859614339]
 
-# Chargement de l'extension ("cog") contenant les commandes
-bot.load_extension("bot.commands")
+# Chargement de l'extension (le cog) contenant les commandes
+from bot.commands import GarooCommands
+bot.add_cog(GarooCommands(bot))
 
 
 # Ces fonctions sont des évènements gérés par pycord
 @bot.event
 async def on_ready():
-    print(f"We have logged in as {bot.user} in {len(bot.guilds)} guilds")
+    print(f"Connecté en tant que {bot.user} dans {len(bot.guilds)} guildes")
 
 
 @bot.event

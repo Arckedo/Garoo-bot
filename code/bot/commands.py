@@ -1,15 +1,6 @@
 from discord import (
-    ApplicationContext,
-    Bot,
-    ButtonStyle,
-    Cog,
-    Colour,
-    Embed,
-    Interaction,
-    Member,
-    User,
-    slash_command,
-    option
+    ApplicationContext, Bot, ButtonStyle, Cog, Colour, Embed,
+    Interaction, Member, User, slash_command, option
 )
 from discord.ui import View, Button
 from main_game import Game
@@ -105,8 +96,3 @@ class GarooCommands(Cog):
         for id, role in game.dic_role_sort().items():
             print(f"Player {client.get_user(id).name} with role {[role]}")
         game.game_loop()
-
-
-# Fonction nécéssaire au chargement de l'extension par py-cord
-def setup(bot):
-    bot.add_cog(GarooCommands(bot))
