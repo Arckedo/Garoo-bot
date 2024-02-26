@@ -10,10 +10,9 @@ class Game:
         self,
         client: GarooClient,
         id_list: list[int],
-        role_list: list[Role],
         turn_count: int,
         game_creator: int,
-        wolf_kill: str = None,
+        role_list: list[Role] = None
     ):
         """
         Initialise la partie avec les paramètres fournis.
@@ -32,11 +31,45 @@ class Game:
         self.turn_count = turn_count
         self.mayor_id = None
         self.game_creator = game_creator
-
-        role_list = sorted(role_list, key=role_order_sort)
+        self.wolf_kill = None
+        self.role_list = self.role_list_creation()
+        role_list = sorted(self.role_list, key=role_order_sort)
         self.start(role_list)
 
         self.alive_notif = self.alive_sort()
+
+
+    def role_list_creation(self):
+        """
+        Crée la liste de rôles.
+
+        Returns:
+            list: Liste de rôles.
+        """
+        entries= []
+        entries.append(("1", 0))
+        entries.append(("2", 1))
+        entries.append(("3", 2))
+        interface = GarooVote(
+            entries=entries,
+            filter=[self.game_creator]
+        )
+        embed= GarooEmbed(
+            title = "__Choisissez les rôles__",
+            description = f"Pour commencer la partie, choisissez une liste de roles parmit les 3 suivantes \n1: {', '.join(roles_combinaton[len(self.id_list)-3][0])}"
+            + f"\n2: {', '.join(roles_combinaton[len(self.id_list)-3][1])}"
+            + f"\n3: {', '.join(roles_combinaton[len(self.id_list)-3][2])}",
+            color = Colour.blue()
+        )
+        dico_vote = self.client.send_interface(interface=interface, embed=embed)
+        print(dico_vote)
+        max_keys = [
+            key
+            for key, value in dico_vote.items()
+            if value == max(dico_vote.values())
+        ]
+        print("max_keys", max_keys)
+        return roles_combinaton[len(self.id_list)-3][max_keys[0]]
 
     def start(self, role_list: list[Role]):
         """

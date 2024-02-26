@@ -139,7 +139,6 @@ class GarooVote(GarooUI):
         options = [SelectOption(label=str(name), value=str(id)) for name, id in entries]
         entries_names = [name for name, id in entries]
         entries_id = [id for name, id in entries]
-        print(entries_names)
         super().__init__(Select(options=options), filter=filter, **kwargs)
         self.weight = weight
         self.voted_list: list[int] = []

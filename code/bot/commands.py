@@ -67,9 +67,8 @@ class GarooCommands(Cog):
 
         client = GarooClient(self.bot, ctx.channel)
         id_list = [p.id for p in view.player_list]
-        role_list = ["hunter", "werewolf", "seer"]
         game = Game(
-            client, id_list, role_list, turn_count=0, game_creator=ctx.author.id
+            client, id_list, turn_count=0, game_creator=ctx.author.id
         )
 
         # Détermine la liste des joueurs avec le rôle Loup-Garou
