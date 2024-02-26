@@ -65,9 +65,6 @@ class Werewolf(Role):
                 entries=game.entries(lst_alive),
                 filter=[player.id for player in self.lst_player],
             )
-            dico_vote = game.client.send_interface(
-                content="Place au vote des Loups AWOUUUUUU !", interface=interface
-                            )
             dico_vote = self.send_embed_role_interface(
                 game,
                 interface=interface,
@@ -136,11 +133,11 @@ class Seer(Role):
         for role in game.role_list:
             for player in role.lst_player:
                 if player.id == max_keys[0]:
-                    user = game.client.get_user(player.id)
+                    user = game.client.get_user(self.lst_player[0].id)
                     self.send_embed_role(
                         game,
                         title="🔮 __Magie de la vision__ 🔮",
-                        description="Voici le rôle de " + str(player) + " :" + str(player.role),
+                        description="Voici le rôle de " + game.name(player.id) + " : " + game.find_role(player.id),
                         dest=user
                     )
 
@@ -308,6 +305,7 @@ class Thief(Role):
                             color=Colour.gold(),
                             thumbnail={"url": self.image},
                         )
+
                         dest = game.client.get_user(self.lst_player[0].id)
                         game.client.send(
                             content="Le voleur a volé ! Voici ton nouveau role :",
@@ -325,7 +323,7 @@ class Thief(Role):
 night_action_list = [Thief, Seer, Werewolf, Witch]
 day_action_list = [Hunter]
 
-role_order = ["thief","seer" "werewolf", "witch", "hunter", "villager"]
+role_order = ["thief","seer", "werewolf", "witch", "hunter", "villager"]
 
 
 def role_order_sort(role):
