@@ -10,10 +10,9 @@ class Game:
         self,
         client: GarooClient,
         id_list: list[int],
-        start_role_list: list[Role],
+        role_list: list[Role],
         turn_count: int,
         game_creator: int,
-        role_list: list[Role] = None,
     ):
         """
         Initialise la partie avec les paramètres fournis.
@@ -22,10 +21,9 @@ class Game:
             client (GarooClient): Client Discord utilisable par le jeu.
             id_list (list): Liste des identifiants des joueurs.
             turn_count (int): Compteur de tours.
-            role_list (list, optional): Liste des rôles, dont le premier argument est booléen
+            role_list (list, optional): Liste des rôles
+            game_creator (int): ID du joueur qui a crée la partie.
         """
-
-        assert start_role_list != None or role_list != None
 
         self.client = client
         self.id_list = id_list
@@ -33,22 +31,17 @@ class Game:
         self.mayor_id = None
         self.game_creator = game_creator
 
-        # Si la role_list n'est pas encore définie, trie les rôles pour les mettre dans l'ordre de passage
-        if role_list is None:
-            start_role_list = sorted(start_role_list, key=role_order_sort)
-            self.start(start_role_list)
-        else:
-            # Ce coté ne fonctionne pas pour l'instant, si l'on veut reprendre une partie
-            self.role_list = role_list
+        role_list = sorted(role_list, key=role_order_sort)
+        self.start(role_list)
 
         self.alive_notif = self.alive_sort()
 
-    def start(self, start_role_list):
+    def start(self, role_list: list[Role]):
         """
         Démarre la partie en attribuant un rôle à chaque joueur.
 
         Args:
-            start_role_list (list): Liste des rôles à attribuer à chaque joueur.
+            role_list (list): Liste des rôles à attribuer à chaque joueur.
         """
 
         self.role_list: list[Role] = []
@@ -66,7 +59,7 @@ class Game:
         }
 
         # Parcourt les listes de joueurs et de rôles simultanément
-        for player_id, str_role in zip(shuff_id_list, start_role_list):
+        for player_id, str_role in zip(shuff_id_list, role_list):
             # Récupère la classe de rôle correspondante au nom de rôle
             role_class = dict_role_class[str_role]
 

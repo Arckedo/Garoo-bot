@@ -137,7 +137,7 @@ class Seer(Role):
                     self.send_embed_role(
                         game,
                         title="🔮 __Magie de la vision__ 🔮",
-                        description="Voici le rôle de " + game.name(player.id) + " : " + game.find_role(player.id),
+                        description="Voici le rôle de " + game.name(player.id) + " : " + str(game.find_role(player.id)),
                         dest=user
                     )
 
@@ -229,7 +229,7 @@ class Hunter(Role):
     def day_action(self,game = None):
         #INTERACTION A REMPLACER (Front)
         #--------------------------
-        lst_alive = game.alive.sort()
+        lst_alive = game.alive_sort()
 
 
         interface = GarooVote(entries=game.entries(lst_alive), filter=[player.id for player in self.lst_player])
