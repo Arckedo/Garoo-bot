@@ -13,4 +13,5 @@ BOT_TOKEN = "MTE5NDk1Njc5NDgxMjk2NDg3NA.GCPSAS.E3H2t7u5TTwt_rFgaTdQ3lQpsrM-Ip4d7
 # Merci stackoverflow
 nest_asyncio.apply()
 
+print("Pour stopper le programme fermez la console ou effectuez Ctrl+C")
 run_bot(BOT_TOKEN)

@@ -314,7 +314,8 @@ class GarooClient:
         interface: GarooUI,
         dest: Union[TextChannel, User] = None
     ) -> None:
-        """Envoie un message contenant une interface.
+        """Envoie un message contenant une interface
+        et attend que l'interaction soit achevée.
 
         Paramètres
         ----------
@@ -323,8 +324,8 @@ class GarooClient:
         interface: `GarooUI`
             L'interface à envoyer.
         dest: `Union[TextChannel, User]`
-            Le salon (ou l'utilisateur) à destination du message, par défaut le message sera
-            envoyé dans le salon `channel` lié à l'objet.
+            Le salon (ou utilisateur) à destination du message. Par défaut
+            le message sera envoyé dans le salon `channel` lié à l'objet.
 
         Retourne
         --------

@@ -3,12 +3,12 @@ from discord import Colour
 
 
 class Player:
-    def __init__(self, id):
+    def __init__(self, id: int):
         self.id = id
         self.is_alive = True
 
 
-class _Role:
+class Role:
     def __init__(self, lst_player: list[Player], image_link: str, description):
         self.lst_player = lst_player
         self.image = image_link
@@ -47,7 +47,7 @@ class _Role:
 # region Roles
 
 
-class Werewolf(_Role):
+class Werewolf(Role):
     def __init__(self, lst_player):
         super().__init__(
             lst_player,
@@ -94,7 +94,7 @@ class Werewolf(_Role):
         return "Loup-Garou"
 
 
-class Villager(_Role):
+class Villager(Role):
     def __init__(self, lst_player):
         super().__init__(
             lst_player,
@@ -106,7 +106,7 @@ class Villager(_Role):
         return "Villageois"
 
 
-class Seer(_Role):
+class Seer(Role):
     def __init__(self, lst_player):
         super().__init__(lst_player)
 
@@ -130,7 +130,7 @@ class Seer(_Role):
         
         #--------------------------
 
-class Witch(_Role):
+class Witch(Role):
     def __init__(self, lst_player):
         super().__init__(
             lst_player,
@@ -203,7 +203,7 @@ class Witch(_Role):
         return "Sorcière"
 
 
-class Hunter(_Role):
+class Hunter(Role):
     def __init__(self, lst_player):
         super().__init__(lst_player)
 
@@ -229,7 +229,7 @@ class Hunter(_Role):
         #--------------------------
 
 
-class Thief(_Role):
+class Thief(Role):
     def __init__(self, lst_player):
         super().__init__(
             lst_player,
