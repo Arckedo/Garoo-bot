@@ -1,5 +1,5 @@
 import random
-from roles.role import *
+from roles import *
 from bot.interactions import GarooClient, GarooEmbed, GarooVote
 from datetime import datetime
 from discord import Colour
@@ -13,6 +13,7 @@ class Game:
         role_list: list[Role],
         turn_count: int,
         game_creator: int,
+        wolf_kill: str = None,
     ):
         """
         Initialise la partie avec les paramètres fournis.
@@ -21,8 +22,9 @@ class Game:
             client (GarooClient): Client Discord utilisable par le jeu.
             id_list (list): Liste des identifiants des joueurs.
             turn_count (int): Compteur de tours.
-            role_list (list, optional): Liste des rôles
+            role_list (list): Liste des rôles
             game_creator (int): ID du joueur qui a crée la partie.
+            wolf_kill (str, optional): ID du joueur qui a tue le Loup-Garou.
         """
 
         self.client = client
