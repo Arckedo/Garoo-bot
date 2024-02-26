@@ -81,7 +81,7 @@ class GarooCommands(Cog):
         client = GarooClient(self.bot, ctx.channel)
         # id_list = [508005660516941824, 1204803272347619474, 663518185068429332]
         id_list = [p.id for p in view.player_list]
-        role_list = ["thief", "werewolf", "witch"]
+        role_list = ["hunter", "werewolf", "seer"]
         game = Game(
             client, id_list, role_list, turn_count=0, game_creator=ctx.author.id
         )

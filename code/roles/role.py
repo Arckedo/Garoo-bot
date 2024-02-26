@@ -108,28 +108,38 @@ class Villager(_Role):
 
 class Seer(_Role):
     def __init__(self, lst_player):
-        super().__init__(lst_player)
+        super().__init__(
+            lst_player,
+            image_link="https://th.bing.com/th/id/OIG4.p4Gc8moHi1vpdfcHsYFL?w=1024&h=1024&rs=1&pid=ImgDetMain",
+            description="La Voyante, guidée par son don divinatoire, révèle chaque nuit l'identité d'un habitant de Thiercelieux, distinguant les villageois des Loups-Garous. Son pouvoir est une arme à double tranchant : révéler la vérité peut aider le village, mais cela expose également la Voyante au danger mortel des Loups-Garous."
+        )
 
     
     def night_action(self,game = None):
-        #INTERACTION A REMPLACER (Front)
-        #--------------------------
         lst_alive = game.alive_sort()
         interface = GarooVote(entries=game.entries(lst_alive) ,filter=[player.id for player in self.lst_player])
-        dico_vote = game.client.send_interface("Veuillez choisir le joueur ou la joueuse dont vous voullez voir le rôle.",interface)
-
+        dico_vote = self.send_embed_role_interface(
+            game,
+            interface=interface,
+            title="🔮 __Magie de la vision__ 🔮",
+            description="Veuillez choisir le joueur ou la joueuse dont vous voullez voir le rôle.",
+        )
         max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
 
         for role in game.role_list:
             for player in role.lst_player:
                 if player.id == max_keys[0]:
-                    user = self.client.get_user(self.id)
-                    self.client.send("Voici le rôle de " + str(player) + " :" + str(player.role), dest = user)
+                    user = game.client.get_user(player.id)
+                    self.send_embed_role(
+                        game,
+                        title="🔮 __Magie de la vision__ 🔮",
+                        description="Voici le rôle de " + str(player) + " :" + str(player.role),
+                        dest=user
+                    )
 
-
-        
-        #--------------------------
-
+    def __str__(self) -> str:
+        return "Voyante"
+    
 class Witch(_Role):
     def __init__(self, lst_player):
         super().__init__(
@@ -205,7 +215,11 @@ class Witch(_Role):
 
 class Hunter(_Role):
     def __init__(self, lst_player):
-        super().__init__(lst_player)
+        super().__init__(
+            lst_player,
+            image_link="https://th.bing.com/th/id/OIG1.NRxdBY8IRZ_5GTtIsfHH?pid=ImgGn",
+            description="Le Chasseur, toujours en embuscade, riposte avec sa flèche mortelle dès qu'il est attaqué par les Loups-Garous. Sa mort est une revanche : il choisit une cible à emporter avec lui dans la tombe, bouleversant le cours du jeu."
+        )
 
         
     def day_action(self,game = None):
@@ -215,8 +229,12 @@ class Hunter(_Role):
 
 
         interface = GarooVote(entries=game.entries(lst_alive), filter=[player.id for player in self.lst_player])
-        dico_vote = game.client.send_interface("Tu as été tué.e ! Il est temps de te venger !!!", interface)
-        print(dico_vote)
+        dico_vote = self.send_embed_role_interface(
+            game,
+            interface = interface,
+            title="🏹 __Chasseur__ 🏹",
+            description="Tu as été tué.e ! Il est temps de te venger !!!"    
+        )
 
         max_keys = [key for key, value in dico_vote.items() if value == max(dico_vote.values())]
         
@@ -226,8 +244,8 @@ class Hunter(_Role):
                 if player.id == max_keys[0]:
                     player.is_alive = False 
 
-        #--------------------------
-
+    def __str__(self) -> str:
+        return "Chasseur"
 
 class Thief(_Role):
     def __init__(self, lst_player):
@@ -297,10 +315,10 @@ class Thief(_Role):
 # endregion
 
 
-night_action_list = [Werewolf, Seer, Witch, Thief]
+night_action_list = [Thief, Seer, Werewolf, Witch]
 day_action_list = [Hunter]
 
-role_order = ["thief", "werewolf", "seer", "witch", "hunter", "villager"]
+role_order = ["thief","seer" "werewolf", "witch", "hunter", "villager"]
 
 
 def role_order_sort(role):
