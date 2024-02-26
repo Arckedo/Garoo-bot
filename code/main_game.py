@@ -253,6 +253,9 @@ class Game:
             if type(role) in day_action_list:
                 role.day_action(game=self)
 
+            end, winner = self.end()
+            if end:
+                return
         # Appel de la fonction de vote
         self.day_vote()
 
