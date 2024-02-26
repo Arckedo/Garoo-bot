@@ -67,8 +67,13 @@ class Werewolf(Role):
             )
             dico_vote = game.client.send_interface(
                 content="Place au vote des Loups AWOUUUUUU !", interface=interface
+                            )
+            dico_vote = self.send_embed_role_interface(
+                game,
+                interface=interface,
+                title="🐺 __Les Loups se réveillent__ 🐺",
+                description="Place au vote des Loups AWOUUUUUU !",
             )
-            print(dico_vote)
 
             # Renvoie la liste des clées de dico_vote dont la valeur est la plus grande
             max_keys = [
@@ -84,8 +89,10 @@ class Werewolf(Role):
                             player.is_alive = False
                             stop = True
             else:
-                game.client.send(
-                    f"Des joueurs ont eu le même nombre de vote ! LES LOUPS DOIVENT SE DECIDER !"
+                dico_vote = self.send_embed_role(
+                    game,
+                    title="🐺 __ LES LOUPS DOIVENT SE DECIDER !__ 🐺",
+                    description="Des joueurs ont eu le même nombre de vote !",
                 )
                 self.night_action(game)
         # --------------------------
