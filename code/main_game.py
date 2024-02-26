@@ -1,7 +1,6 @@
 import random
-from roles import *
-from bot.interactions import GarooClient
-from bot.interactions import GarooVote, GarooEmbed
+from roles.role import *
+from bot.interactions import GarooClient, GarooEmbed, GarooVote
 from datetime import datetime
 from discord import Colour
 
@@ -10,11 +9,11 @@ class Game:
     def __init__(
         self,
         client: GarooClient,
-        id_list: list,
-        start_role_list: list,
+        id_list: list[int],
+        start_role_list: list[Role],
         turn_count: int,
         game_creator: int,
-        role_list: list = None,
+        role_list: list[Role] = None,
     ):
         """
         Initialise la partie avec les paramètres fournis.
@@ -52,7 +51,7 @@ class Game:
             start_role_list (list): Liste des rôles à attribuer à chaque joueur.
         """
 
-        self.role_list = []
+        self.role_list: list[Role] = []
         # Mélange les id des joueurs
         shuff_id_list = list(self.id_list)
         random.shuffle(shuff_id_list)
@@ -98,7 +97,6 @@ class Game:
         Effectue la boucle du jeu.
         """
         while True:
-
             if self.turn_count == 0:
                 # INTERACTION À REMPLACER (Front)
                 self.mayor_vote()
