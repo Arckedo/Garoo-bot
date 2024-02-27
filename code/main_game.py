@@ -276,8 +276,7 @@ class Game:
         self.game_embed(
             title=f"🌅 __Jour {self.turn_count}__ 🌅",
             thumbnail={"url": "https://th.bing.com/th/id/OIG2.OColV0JanmsfatOIhZge"},
-            description=f"""L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(f"{self.mention(player)} : {self.find_role(player)}" for player in death)}
-            \nLes joueurs suivant ont été ressuscités cette nuit : {", ".join(self.mention_lst(resur))}""",
+            description=f"L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(f"{self.mention(player)} : {self.find_role(player)}" for player in death)}",
         )
 
         if self.mayor_id in death:
