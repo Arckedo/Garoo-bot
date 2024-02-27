@@ -1,3 +1,4 @@
+from main_game import Game
 from roles.role import Role
 from bot.interactions import GarooVote, GarooEmbed
 from discord import Colour
@@ -11,7 +12,7 @@ class Thief(Role):
             description="Le voleur est un personnage qui a le pouvoir de voler le rôle d'un autre joueur pendant la nuit.",
         )
 
-    async def night_action(self, game=None):
+    def night_action(self, game: Game):
         if game.turn_count != 1:
             return
 
@@ -40,12 +41,8 @@ class Thief(Role):
                 )
 
                 if str(role) == "Loup-Garou":
-                    await game.client.werewolf_channel.remove_user(
-                        game.client.get_user(self.lst_player[0].id)
-                    )
-                    await game.client.werewolf_channel.add_user(
-                        game.client.get_user(player.id)
-                    )
+                    game.client.remove_werewolf(self.lst_player[0].id)
+                    game.client.add_werewolf(player.id)
 
                 # message au joueur qui a volé un role
                 embed = GarooEmbed(

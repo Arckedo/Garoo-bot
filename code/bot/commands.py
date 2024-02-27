@@ -1,15 +1,6 @@
 from discord import (
-    ApplicationContext,
-    Bot,
-    ButtonStyle,
-    Cog,
-    Colour,
-    Embed,
-    Interaction,
-    Member,
-    User,
-    slash_command,
-    option,
+    ApplicationContext, Bot, ButtonStyle, Cog, Colour, Embed,
+    Interaction, Member, User, slash_command, option,
 )
 from discord.ui import View, Button
 from main_game import Game
@@ -113,7 +104,7 @@ class GarooCommands(Cog):
 
         # Démarre la partie
         async def start():
-            await game.game_loop()
+            game.game_loop()
 
         asyncio.create_task(start())
 

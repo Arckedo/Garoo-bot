@@ -14,7 +14,6 @@ bot.debug_guilds = [1194944354859614339]
 
 # Chargement de l'extension (le cog) contenant les commandes
 from bot.commands import GarooCommands
-
 bot.add_cog(GarooCommands(bot))
 
 

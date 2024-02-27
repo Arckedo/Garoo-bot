@@ -5,30 +5,6 @@ from typing import Any, Optional, Union
 import asyncio
 
 
-"""
-### Envoyer des interaction ###
-
-# Envoyer un message simple
-self.client.send("Message envoyé à tous")
-
-# Envoyer et recevoir les résultats d'un vote
-# Sous la forme d'un dico {entry: vote_count}
-my_vote = GarooVote(...)
-results = self.client.send_interface("Message", my_vote)
-
-# Même chose pour un choix simple
-my_choose = GarooChoose(...)
-result = self.client.send_interface("Message", my_choose)
-
-# Envoyer un message dans le salon des loup-garoux
-self.client.send("Message", dest=self.client.werewolf_channel)
-
-# Envoyer un message à un membre (en messages privés)
-member = self.client.get_member(...)
-self.client.send("Message", dest=member)
-"""
-
-
 class GarooEmbed(Embed):
     """Représente un embed pour interagir avec les joueurs."""
 
@@ -254,6 +230,14 @@ class GarooClient:
         self.werewolf_channel = channel
         for player in werewolf_ids:
             await channel.add_user(self.get_user(player))
+
+    def add_werewolf(self, user_id: int):
+        """Ajoute un utilisateur au salon des loup-garous."""
+        asyncio.create_task(self.werewolf_channel.add_user(self.get_user(user_id)))
+
+    def remove_werewolf(self, user_id: int):
+        """Enlève un utilisateur du salon des loup-garous."""
+        asyncio.create_task(self.werewolf_channel.remove_user(self.get_user(user_id)))
 
     def get_user(self, user_id: int) -> Optional[User]:
         """Récupère un membre à partir d'un identifiant Discord.

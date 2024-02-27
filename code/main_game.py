@@ -56,9 +56,9 @@ class Game:
         )
         embed= GarooEmbed(
             title = "__Choisissez les rôles__",
-            description = f"Pour commencer la partie, choisissez une liste de roles parmit les 3 suivantes \n1: {', '.join(roles_combinaton[len(self.id_list)-3][0])}"
-            + f"\n2: {', '.join(roles_combinaton[len(self.id_list)-3][1])}"
-            + f"\n3: {', '.join(roles_combinaton[len(self.id_list)-3][2])}",
+            description = (f"Pour commencer la partie, choisissez une liste de roles parmit les 3 suivantes \n1 : {', '.join(roles_combinaton[len(self.id_list)-3][0])}"
+                           f"\n2 : {', '.join(roles_combinaton[len(self.id_list)-3][1])}"
+                           f"\n3 : {', '.join(roles_combinaton[len(self.id_list)-3][2])}"),
             color = Colour.blue()
         )
         dico_vote = self.client.send_interface(interface=interface, embed=embed)
@@ -118,7 +118,7 @@ class Game:
                 dest = self.client.get_user(player.id)
                 self.client.send(embed=embed, dest=dest)
 
-    async def game_loop(self):
+    def game_loop(self):
         """
         Effectue la boucle du jeu.
         """
@@ -128,7 +128,7 @@ class Game:
                 self.mayor_vote()
 
             self.turn_count += 1
-            await self.night_turn()
+            self.night_turn()
 
             end, winner = self.end()
             if end:
@@ -176,10 +176,9 @@ class Game:
             dico_vote = self.game_embed_interface(
                 interface=interface,
                 title="⚖️ __L'héritage du maire de Thiercelieux__ ⚖️",
-                description="""
-                À Thiercelieux, lors de la succession du maire,
-                les villageois se réunissent avec gravité. Chacun exprime ses choix, les candidats exposent leurs arguments.
-                Les votes sont recueillis, et le nom du successeur est annoncé, marquant ainsi un tournant pour le village.""",
+                description=("À Thiercelieux, lors de la succession du maire, "
+                             "les villageois se réunissent avec gravité. Chacun exprime ses choix, les candidats exposent leurs arguments. "
+                             "Les votes sont recueillis, et le nom du successeur est annoncé, marquant ainsi un tournant pour le village."),
                 thumbnail={
                     "url": "https://th.bing.com/th/id/OIG3.NTqM_6GH4PlXQHh1fkN8"
                 },
@@ -203,9 +202,9 @@ class Game:
             dico_vote = self.game_embed_interface(
                 interface=interface,
                 title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
-                description="""À Thiercelieux, lors du vote pour le maire, les villageois se réunissent avec sérieux.
-                Chacun exprime son choix avec attention. Les candidats font leurs discours, essayant de convaincre.
-                Les votes sont déposés dans l'urne. Le nom du nouveau maire est annoncé, scellant ainsi le destin du village.""",
+                description=("À Thiercelieux, lors du vote pour le maire, les villageois se réunissent avec sérieux. "
+                             "Chacun exprime son choix avec attention. Les candidats font leurs discours, essayant de convaincre. "
+                             "Les votes sont déposés dans l'urne. Le nom du nouveau maire est annoncé, scellant ainsi le destin du village."),
                 thumbnail={
                     "url": "https://th.bing.com/th/id/OIG2.7ICIfw0NlW2tpNZ8O0Eu"
                 },
@@ -235,14 +234,14 @@ class Game:
             else:
                 embed = GarooEmbed(
                     title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
-                    description="Les joueurs suivants ont eu le même nombre de vote : "
-                    + str(", ".join([self.mention(player) for player in max_keys]))
-                    + " !",
+                    description=("Les joueurs suivants ont eu le même nombre de vote : "
+                                 ", ".join([self.mention(player) for player in max_keys]) +
+                                 " !"),
                     colour=Colour.orange(),
                 )
                 self.client.send(embed=embed)
 
-    async def night_turn(self):
+    def night_turn(self):
         """
         Effectue les actions de la nuit pour chaque rôle.
 
@@ -258,10 +257,8 @@ class Game:
 
         for role in self.role_list:
             if type(role) in night_action_list:
-                if type(role) == Thief:
-                    await role.night_action(game=self)
-                else:
-                    role.night_action(game=self)
+                role.night_action(game=self)
+
     def day_turn(self):
         """
         Effectue les actions du jour après la nuit.
@@ -276,7 +273,8 @@ class Game:
         self.game_embed(
             title=f"🌅 __Jour {self.turn_count}__ 🌅",
             thumbnail={"url": "https://th.bing.com/th/id/OIG2.OColV0JanmsfatOIhZge"},
-            description=f"""L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : {", ".join(f"{self.mention(player)} : {self.find_role(player)}" for player in death)}""",
+            description=("L'aube éblouit Thiercelieux, Les joueurs suivant sont morts cette nuit : "
+                        f"{', '.join(f'{self.mention(player)} : {self.find_role(player)}' for player in death)}"),
         )
 
         if self.mayor_id in death:
@@ -314,10 +312,10 @@ class Game:
         dico_vote = self.game_embed_interface(
             interface=interface,
             title="⚖️ __Le Jugement de Thiercelieux__ ⚖️",
-            description="""Au crépuscule à Thiercelieux, les villageois se rassemblent en cercle, scrutant les visages avec suspicion.
-            Chacun accuse et vote pour celui qu'il croit être un loup-garou. Les cœurs battent la chamade alors que le verdict se profile.
-            La tension est à son comble jusqu'à ce que le nom du condamné soit prononcé,
-            scellant le destin du village pour cette nuit-là.""",
+            description=("Au crépuscule à Thiercelieux, les villageois se rassemblent en cercle, scrutant les visages avec suspicion. "
+                         "Chacun accuse et vote pour celui qu'il croit être un loup-garou. Les cœurs battent la chamade alors que le verdict se profile. "
+                         "La tension est à son comble jusqu'à ce que le nom du condamné soit prononcé, "
+                         "scellant le destin du village pour cette nuit-là."),
             thumbnail={"url": "https://th.bing.com/th/id/OIG3.Oyo.LIt40eLhGtoZU0T_"},
         )
 
@@ -345,10 +343,9 @@ class Game:
             )
             embed = GarooEmbed(
                 title="⚖️ __Le Jugement du Maire__ ⚖️",
-                description="Les joueurs suivants ont eu le même nombre de vote : "
-                + str(", ".join([self.mention(player) for player in max_keys]))
-                + " !"
-                + "\nLe maire va trancher le vote !",
+                description=("Les joueurs suivants ont eu le même nombre de vote : "
+                             ", ".join([self.mention(player) for player in max_keys]) +
+                             "\nLe maire va trancher le vote !"),
                 colour=Colour.orange(),
             )
             dico_vote = self.client.send_interface(interface=interface, embed=embed)
