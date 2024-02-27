@@ -10,7 +10,7 @@ class Seer(Role):
             description="La Voyante, guidée par son don divinatoire, révèle chaque nuit l'identité d'un habitant de Thiercelieux, distinguant les villageois des Loups-Garous. Son pouvoir est une arme à double tranchant : révéler la vérité peut aider le village, mais cela expose également la Voyante au danger mortel des Loups-Garous.",
         )
 
-    def night_action(self, game=None):
+    def night_action(self, game):
         if self.lst_player[0].is_alive == False:
             return
 

@@ -256,8 +256,8 @@ class Game:
         )
 
         for role in self.role_list:
-            if type(role) in night_action_list:
-                role.night_action(game=self)
+            action = getattr(role, "night_action", (lambda game: None))
+            action(game=self)
 
     def day_turn(self):
         """
@@ -268,7 +268,7 @@ class Game:
         la nuit, lance le processus de vote pour élire un nouveau maire.
         """
 
-        death, resur = self.alive_notification()
+        death = self.alive_notification()[0]
 
         self.game_embed(
             title=f"🌅 __Jour {self.turn_count}__ 🌅",
@@ -282,12 +282,12 @@ class Game:
             self.mayor_vote()
 
         for role in self.role_list:
-            if type(role) in day_action_list:
-                role.day_action(game=self)
+            action = getattr(role, "day_action", (lambda game: None))
+            action(game=self)
 
-            end, winner = self.end()
-            if end:
+            if self.end()[0]:
                 return
+
         # Appel de la fonction de vote
         self.day_vote()
 

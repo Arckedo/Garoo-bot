@@ -10,7 +10,7 @@ class Hunter(Role):
             description="Le Chasseur, toujours en embuscade, riposte avec sa flèche mortelle dès qu'il est attaqué par les Loups-Garous. Sa mort est une revanche : il choisit une cible à emporter avec lui dans la tombe, bouleversant le cours du jeu.",
         )
 
-    def day_action(self, game=None):
+    def day_action(self, game):
         if self.lst_player[0].is_alive == True:
             return
 

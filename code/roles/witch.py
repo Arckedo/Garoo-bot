@@ -11,7 +11,7 @@ class Witch(Role):
         self.life_potion = True
         self.death_potion = True
 
-    def night_action(self, game=None):
+    def night_action(self, game):
         """
         Effectue l'action de nuit de la sorcière.
 
@@ -19,7 +19,7 @@ class Witch(Role):
         """
         if self.lst_player[0].is_alive == False and game.wolf_kill != game.name(self.lst_player[0].id):
             return
-        
+
         lst_player = []
         for role in game.role_list:
             for player in role.lst_player:
@@ -55,7 +55,7 @@ class Witch(Role):
                     return
                 chosen_player = player
                 break
-        
+
         for role in game.role_list:
             for player in role.lst_player:
                 if player.id == chosen_player:
@@ -87,5 +87,6 @@ class Witch(Role):
             description="La sorcière n'a pas pu sauver ou empoisonner un joueur. Elle doit refaire un choix.",
         )
         self.night_action(game)
+
     def __str__(self) -> str:
         return "Sorcière"

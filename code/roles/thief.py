@@ -1,4 +1,3 @@
-from main_game import Game
 from roles.role import Role
 from bot.interactions import GarooVote, GarooEmbed
 from discord import Colour
@@ -12,7 +11,7 @@ class Thief(Role):
             description="Le voleur est un personnage qui a le pouvoir de voler le rôle d'un autre joueur pendant la nuit.",
         )
 
-    def night_action(self, game: Game):
+    def night_action(self, game):
         if game.turn_count != 1:
             return
 
