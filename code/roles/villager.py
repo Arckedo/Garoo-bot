@@ -1,5 +1,6 @@
 from roles.role import Role
 
+
 class Villager(Role):
     def __init__(self, lst_player):
         super().__init__(

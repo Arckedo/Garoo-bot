@@ -9,9 +9,6 @@ Le jeu peut être structurer en 3 parties:
 - Connecté avec pycord (Front)
 - Gestion des données / serveurs (Back)
 
-Voici la structure du côté Pure-Jeu:
-![](images/game_structure.jpg)
-
 # Comment utiliser Garoo-bot ?
 Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
 
@@ -71,11 +68,7 @@ LONG TERMES:
 -> Rajouter le reste des rôles
 -> Faire de meilleurs visions graphiques pour discord via l'api, effet de texte, petite barre a coté...
 
-EN +:
--> Créer une image avec PIL pour animer un peu plus le bot discord (par exemple si quelqu'un meurt)
--> Plusieurs langues de disponibles 
-
-Truc a faire:
+Truc a faire: FAIT
 -> Un threads
 -> Rejoindre une partie
 -> Terminer Les roles

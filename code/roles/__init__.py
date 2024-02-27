@@ -1,4 +1,4 @@
-#Définie le fichier comme un package
+# Définie le fichier comme un package
 from roles.role import *
 from roles.hunter import *
 from roles.seer import *

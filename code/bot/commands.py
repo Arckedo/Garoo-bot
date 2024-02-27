@@ -1,13 +1,21 @@
 from discord import (
-    ApplicationContext, Bot, ButtonStyle, Cog, Colour, Embed,
-    Interaction, Member, User, slash_command, option
+    ApplicationContext,
+    Bot,
+    ButtonStyle,
+    Cog,
+    Colour,
+    Embed,
+    Interaction,
+    Member,
+    User,
+    slash_command,
+    option,
 )
 from discord.ui import View, Button
 from main_game import Game
 from bot.interactions import GarooClient, GarooEmbed
 from roles import Werewolf
 import asyncio
-
 
 
 class StartEmbed(Embed):
@@ -55,7 +63,13 @@ class GarooCommands(Cog):
         self.bot: Bot = bot
 
     @slash_command(name="loupgarou")
-    @option("minimum_players", description="Nombre de joueurs minimum", default=3, min_value=3, max_value=10)
+    @option(
+        "minimum_players",
+        description="Nombre de joueurs minimum",
+        default=3,
+        min_value=3,
+        max_value=10,
+    )
     async def new_game(self, ctx: ApplicationContext, minimum_players: int = 3):
         """Démarre une nouvelle partie de Loup-Garou 🐺"""
 
@@ -67,9 +81,7 @@ class GarooCommands(Cog):
 
         client = GarooClient(self.bot, ctx.channel)
         id_list = [p.id for p in view.player_list]
-        game = Game(
-            client, id_list, turn_count=0, game_creator=ctx.author.id
-        )
+        game = Game(client, id_list, turn_count=0, game_creator=ctx.author.id)
 
         # Détermine la liste des joueurs avec le rôle Loup-Garou
         werewolf_ids = []
@@ -85,9 +97,11 @@ class GarooCommands(Cog):
 
         embed = GarooEmbed(
             title="Partie de loup-garou créée !",
-            description=("La partie démarrera sous peu avec les joueurs suivants : "
+            description=(
+                "La partie démarrera sous peu avec les joueurs suivants : "
                 + ", ".join([player.mention for player in view.player_list])
-                + "\nBonne chance a tous les joueurs !"),
+                + "\nBonne chance a tous les joueurs !"
+            ),
             colour=Colour.green(),
         )
         # Envoie la réponse à la commande
@@ -99,7 +113,8 @@ class GarooCommands(Cog):
 
         # Démarre la partie
         async def start():
-            game.game_loop()
+            await game.game_loop()
+
         asyncio.create_task(start())
 
         # On utilise asyncio pour que la fonction actuelle (new_game)

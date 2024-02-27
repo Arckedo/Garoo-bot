@@ -14,6 +14,7 @@ bot.debug_guilds = [1194944354859614339]
 
 # Chargement de l'extension (le cog) contenant les commandes
 from bot.commands import GarooCommands
+
 bot.add_cog(GarooCommands(bot))
 
 
@@ -31,7 +32,7 @@ async def on_message(message: discord.Message):
         await message.channel.send(f"cleaning {len(channel.threads)} threads...")
         for i, thread in enumerate(channel.threads):
             await thread.delete()
-            print(i+1, "thread cleaned")
+            print(i + 1, "thread cleaned")
         await message.channel.send("cleaning done")
 
 

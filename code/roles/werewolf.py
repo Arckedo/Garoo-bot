@@ -1,6 +1,7 @@
 from bot.interactions import GarooVote
 from roles.role import Role
 
+
 class Werewolf(Role):
     def __init__(self, lst_player):
         super().__init__(

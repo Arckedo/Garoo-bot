@@ -42,6 +42,7 @@ class Role:
 
         return game.client.send_interface(interface=interface, embed=embed, dest=dest)
 
+
 role_order = ["thief", "seer", "werewolf", "witch", "hunter", "villager"]
 
 

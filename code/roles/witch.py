@@ -36,7 +36,7 @@ class Witch(Role):
         )
 
         entries = game.entries([player.id for player in lst_player])
-        entries.append(("Ne rien faire", None))
+        entries.append(("Ne rien faire", -1))
         interface = GarooVote(
             entries=entries, filter=[player.id for player in self.lst_player]
         )
@@ -51,9 +51,11 @@ class Witch(Role):
 
         for player, vote in dico_vote.items():
             if vote == 1:
+                if player == -1:
+                    return
                 chosen_player = player
                 break
-
+        
         for role in game.role_list:
             for player in role.lst_player:
                 if player.id == chosen_player:
@@ -64,7 +66,7 @@ class Witch(Role):
                             game,
                             dest=dest,
                             title="⚕️ __Sauvetage de la sorcière__ ⚕️",
-                            description=f"{game.name(player)} a été sauvé par la sorcière.",
+                            description=f"{game.name(player.id)} a été sauvé par la sorcière.",
                         )
                         return
                     elif player.is_alive == True and self.death_potion == True:
@@ -74,7 +76,7 @@ class Witch(Role):
                             game,
                             dest=dest,
                             title="☠️ __Empoisonnement de la sorcière__ ☠️",
-                            description=f"{game.name(player)} a été empoisonné par la sorcière.",
+                            description=f"{game.name(player.id)} a été empoisonné par la sorcière.",
                         )
                         return
 
@@ -84,5 +86,6 @@ class Witch(Role):
             title="⚗️ __Pouvoirs de la sorcière__ ⚗️",
             description="La sorcière n'a pas pu sauver ou empoisonner un joueur. Elle doit refaire un choix.",
         )
+        self.night_action(game)
     def __str__(self) -> str:
         return "Sorcière"

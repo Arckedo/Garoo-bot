@@ -62,13 +62,11 @@ class Game:
             color = Colour.blue()
         )
         dico_vote = self.client.send_interface(interface=interface, embed=embed)
-        print(dico_vote)
         max_keys = [
             key
             for key, value in dico_vote.items()
             if value == max(dico_vote.values())
         ]
-        print("max_keys", max_keys)
         return roles_combinaton[len(self.id_list)-3][max_keys[0]]
 
     def start(self, role_list: list[Role]):
@@ -120,7 +118,7 @@ class Game:
                 dest = self.client.get_user(player.id)
                 self.client.send(embed=embed, dest=dest)
 
-    def game_loop(self):
+    async def game_loop(self):
         """
         Effectue la boucle du jeu.
         """
@@ -130,7 +128,7 @@ class Game:
                 self.mayor_vote()
 
             self.turn_count += 1
-            self.night_turn()
+            await self.night_turn()
 
             end, winner = self.end()
             if end:
@@ -244,7 +242,7 @@ class Game:
                 )
                 self.client.send(embed=embed)
 
-    def night_turn(self):
+    async def night_turn(self):
         """
         Effectue les actions de la nuit pour chaque rôle.
 
@@ -260,8 +258,10 @@ class Game:
 
         for role in self.role_list:
             if type(role) in night_action_list:
-                role.night_action(game=self)
-
+                if type(role) == Thief:
+                    await role.night_action(game=self)
+                else:
+                    role.night_action(game=self)
     def day_turn(self):
         """
         Effectue les actions du jour après la nuit.
@@ -371,7 +371,7 @@ class Game:
                         )
                         if player.id == self.mayor_id:
                             self.game_embed(title=f"👑 __Le maire est mort__ 👑")
-                            self.mayor_vote(self)
+                            self.mayor_vote()
 
     def end(self):
         """

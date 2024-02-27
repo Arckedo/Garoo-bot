@@ -2,6 +2,7 @@ from roles.role import Role
 from bot.interactions import GarooVote, GarooEmbed
 from discord import Colour
 
+
 class Thief(Role):
     def __init__(self, lst_player):
         super().__init__(
@@ -10,7 +11,7 @@ class Thief(Role):
             description="Le voleur est un personnage qui a le pouvoir de voler le rôle d'un autre joueur pendant la nuit.",
         )
 
-    def night_action(self, game=None):
+    async def night_action(self, game=None):
         if game.turn_count != 1:
             return
 
@@ -26,9 +27,7 @@ class Thief(Role):
         )
         print("Dico vote : ", dico_vote)
         max_keys = [
-            key
-            for key, value in dico_vote.items()
-            if value == max(dico_vote.values())
+            key for key, value in dico_vote.items() if value == max(dico_vote.values())
         ]
         for role in game.role_list:
             for player in role.lst_player:
@@ -40,6 +39,15 @@ class Thief(Role):
                     player.id,
                 )
 
+                if str(role) == "Loup-Garou":
+                    await game.client.werewolf_channel.remove_user(
+                        game.client.get_user(self.lst_player[0].id)
+                    )
+                    await game.client.werewolf_channel.add_user(
+                        game.client.get_user(player.id)
+                    )
+
+                # message au joueur qui a volé un role
                 embed = GarooEmbed(
                     title=f"**{role}**",
                     description=role.description,
@@ -53,13 +61,13 @@ class Thief(Role):
                     dest=dest,
                 )
 
+                # message au joueur ayant perdu son role
                 embed = GarooEmbed(
                     title=f"**{self}**",
                     description=self.description,
                     color=Colour.gold(),
                     thumbnail={"url": self.image},
                 )
-
                 dest = game.client.get_user(self.lst_player[0].id)
                 game.client.send(
                     content="Le voleur a volé ! Voici ton nouveau role :",
