@@ -1,4 +1,6 @@
-# Définie le fichier comme un package
+# Permet d'effectuer : from roles import *
+# depuis le code principal
+
 from roles.role import *
 from roles.hunter import *
 from roles.seer import *
