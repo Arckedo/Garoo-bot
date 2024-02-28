@@ -18,7 +18,7 @@ Démarrage du bot...
 > Pour débugger, lancez l'exécutable depuis un nouvel invite de commande.
 
 ## Jouer sur Discord
-Rejoignez tout d'abord notre [serveur discord](https://discord.gg/nvnHPMC5wj). Puis  pour commencer une partie, rendez-vous dans un des salons (de préférence le salon "jeu"), puis tapez la commande "/loupgarou". Vous pouvez préciser un nombre de joueur avec l'option "minimum_player" (entre 3 et 10).
+Rejoignez tout d'abord notre [serveur discord](https://discord.gg/nvnHPMC5wj). Pour commencer une partie, rendez-vous dans un des salons (de préférence le salon "jeu"), et tapez la commande "/loupgarou". Vous pouvez préciser un nombre de joueur avec l'option "minimum_player" (entre 3 et 10).
 
 Un message "[vous] organise une partie de loup-garou !" devrait apparaître. Cliquez alors sur le bouton "Rejoindre" et attendez que d'autres joueurs rejoignent.
 

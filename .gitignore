@@ -1,2 +1,5 @@
 __pycache__/
 /venv/
+.vscode/
+/pyinstaller/
+code/config.json

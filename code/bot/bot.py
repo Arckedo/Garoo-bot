@@ -35,6 +35,6 @@ async def on_message(message: discord.Message):
         await message.channel.send("cleaning done")
 
 
-def run_bot(token: str) -> None:
+def run_bot(token: str):
     print("Démarrage du bot...")
     bot.run(token)
