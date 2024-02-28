@@ -4,7 +4,7 @@
 # Comment utiliser Garoo ?
 
 ## Héberger un GarooBot
-Téléchargez le fichier .zip de la dernière version de GarooBot depuis l'onglet [releases](https://github.com/Arckedo/Garoo-bot/releases/latest).\
+Téléchargez le fichier .zip de la dernière version de GarooBot depuis l'onglet [releases](https://github.com/Arckedo/Garoo-bot/releases/).\
 Décompressez-le, puis lancez l'exécutable "garoobot.exe" situé dans le dossier "dist".
 
 Un invite de commande devrait s'ouvrir en affichant :
