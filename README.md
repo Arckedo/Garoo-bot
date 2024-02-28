@@ -1,4 +1,11 @@
+# Garoo
+
 ![](images/🐺Garoo🐺.png)
+
+Auteurs :
+- Hugo Rondeau (alias ShootGo)
+- Rayan Barhada (alias Arckedo)
+- Titouan Favennec (alias Rag ou Rag404)
 
 #
 # Comment utiliser Garoo ?
