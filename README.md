@@ -1,76 +1,65 @@
-# 🐺Garoo, le meilleur des bots 😁👋🐺
 ![](images/🐺Garoo🐺.png)
+
+#
+# Comment utiliser Garoo ?
+
+## Héberger un GarooBot
+Téléchargez le fichier .zip de la dernière version de GarooBot depuis l'onglet [releases](https://github.com/Arckedo/Garoo-bot/releases/latest).\
+Décompressez-le, puis lancez l'éxécutable "garoobot.exe" situé dans le dossier "dist".
+
+Un invite de commande devrait s'ouvrir en affichant :
+```
+Pour stopper le programme fermez la console ou effectuez Ctrl+C
+Démarrage du bot...
+```
+
+> [!TIP]
+> Lorsque le programme s'arrête, la fenêtre se ferme.\
+> Pour débugger, lancez l'éxécutable depuis un nouvel invite de commande.
+
+## Jouer sur Discord
+Rejoignez tout d'abord notre [serveur discord](https://discord.gg/nvnHPMC5wj). Puis  pour commencer une partie, rendez-vous dans un des salons (de préférence le salon "jeu"), puis tapez la commande "/loupgarou". Vous pouvez préciser un nombre de joueur avec l'option "minimum_player" (entre 3 et 10).
+
+Un message "[vous] organise une partie de loup-garou !" devrait apparaître. Cliquez alors sur le bouton "Rejoindre" et attendez que d'autres joueurs rejoignent.
+
+Lorsque les joueurs seront au complet, un message vous demandera de sélectionner une liste de rôles qui seront donnés aux joueurs. Faites votre choix, et enfin profitez de la partie !
+
+> [!TIP]
+> Si les volontaires viennent à manquer, tapez "@everyone" dans un salon pour notifier tous les membres du serveur. Réponse garantie à toute heure.
+
 #
 # Garoo, c'est quoi ?
-Garoo est un bot discord permettant de jouer au Loup Garou avec ses amis !
-# Structure du Jeu
-Le jeu peut être structurer en 3 parties:
-- Pure-Jeu (Seulement le jeu sans rapport avec Discord ou la sauvegarde des donnés)
-- Connecté avec pycord (Front)
-- Gestion des données / serveurs (Back)
 
-# Comment utiliser Garoo-bot ?
-Commencer d'abord par installer les fichiers (⚠️Il vous faut un compte github pour effectuer cette étape⚠️)
+Garoo ou GarooBot est un bot/application Discord permettant de jouer au célèbre jeu de société [Les Loups-garous de Thiercelieux](https://fr.wikipedia.org/wiki/Les_Loups-garous_de_Thiercelieux) avec ses amis en ligne !\
+Il est possible de jouer avec 3 à 10 joueurs.
 
->[!IMPORTANT]
->Installer la version de python suivante : https://www.python.org/downloads/release/python-3117/ . Suivez les instruction (installer maintenant) et gardez la localisation (dans un bloc-note où application de ce genre).
+## Structure du code
+Le jeu est structuré en 3 parties :
+- La partie jeu : le programme principal gérant le déroulement des parties. (Titouan Favennec)
+- La partie API : servant de lien entre la partie jeu et les utilisateurs Discord. (Rayan Barhada)
+- Les rôles : gérés par la partie jeu, avec chacun un fichier et une classe respective. (Hugo Rondeau)
 
-Puis une fois l'installation terminée. Vérrifier d'abord si vous avez pip (utilisé pour installer les bibliothèque pour faire fonctionner le bot).
+## Comment ça marche ?
+Lorsqu'on lance une partie, la partie API enregistre la commande et initialise une nouvelle partie (recueillir des joueurs, créer une instance de la classe principale, etc). Puis elle passe le relais à la partie jeu qui démarre et fait tourner la partie.
 
-Pour cela lancer l'éxécutable python.exe (trouvable à l'endroit que vous avez sauvegarder précédement), puis lancez la commmande suivante :
+Tout au long de cette partie, le programme principal va régulièrement faire appel au côté API pour envoyer et recevoir des information des joueurs sous forme de message (ex. : vote du maire par les joueurs). Les rôles agissent de la même manière (ex. : la sorcière choisi une action).
 
->[!WARNING]
->Si vous étes sur Windows :
->-  ```py -m ensurepip```
+Chaque tour de jeu est découpé en 2 périodes : le jour et la nuit. Ainsi, chaque rôle possède une fonction représentant son action pour le jour et/ou la nuit (ex. : les loups agissent la nuit, le chasseur pendant le jour). Cette fonction est appelée naïvement par le programme principal.\
+Certains évènements sont aussi gérés par la partie jeu mais sont toujours répartis selon la période (ex. : vote des joueurs le jour).
 
->[!WARNING]
->Sinon :
->- ```python -m ensurepip```
+Le jeu se termine tout simplement lorsque le nombre de loups-garous ou de viallegois tombe à zéro, au quel cas le camp opposé remporte la victoire.
 
-Cela devrait ne rien si pip et bel et bien installé avec python sinon il sera installer (cette action ne nécésite pas internet pour être faite)
+L'utilisation de la librairie "asyncio" de Python permet de gérer plusieurs parties de manière asynchrone si besoin.
 
-Ensuite dans le même terminal (celui de python.exe) et installer la librairie Pycord 2.4 avec la commande suivante :
+> [!NOTE]
+> Le programme étant constitué en quasi-totalité de fonctions ne retournant pas de valeurs, et agissant directement sur des variables/attributs, il est difficile d'écrire des tests pour celles-ci.
+>
+> Cela nécessiterait d'initialiser une instance de la classe principale, en changeant plusieurs attributs spécifiques manuellement (ex. listes d'objets joueurs), puis de vérifier l'état d'autres attributs encore. Et cela pour des dizaines de fonctions.
 
->[!WARNING]
->Pour Windows :
->- ```py -m pip install py-cord==2.4```
+## Spécifications
+GarooBot utilise Python 3.11 pour fonctionner, ainsi que les librairies suivantes :
+- Pycord 2.4.0
+- Nest Asyncio 1.6.0
 
->[!WARNING]
->Et pour UNIX/MacOS :
->- ```python -m pip install py-cord==2.4```
-
-Il ne vous reste plus qu'a lancer le fichier `main.py` dans le dossier 
-
-# Specs
-- Python 3.11.7
-- Pycord 2.4
-
-# Joueur en plus disponible pour les tests
-discorotino	discoro_.0.1	DEUX.468
-
-# LISTE DE ROUTE 08/02/2024
-COURT TERME:
--> Fonction trouver les nouveaux morts / résuscité via la différence de l'enseigne données sur les joueurs FAIT
-
--> Envoyer des messages seullement au Loups pour qu'ils sachent qui a été voté par leurs coéquipier / peuvent parler entre eux. TITOUAN
-
--> Le meme probleme que pour les Loups mais pour les roles, il faut recevoir son role (pq pas une commande pour voir son role ou un message privée) TITOUAN
-
--> Faire des asserts de préconditions et bien documenté le code 
-
--> Faire un .md propre
-
--> Si il ne reste plus que deux joueurs (Changer réélire par le maire choisies un prédécesseur) RAYAN
-
--> Permettre de choisir si l'on veut rejoindre la partie qui vient d'être créer. HUGO Attente (TITOUAN DE LA FONCTION)
-
-LONG TERMES:
--> Rajouter le reste des rôles
--> Faire de meilleurs visions graphiques pour discord via l'api, effet de texte, petite barre a coté...
-
-Truc a faire: FAIT
--> Un threads
--> Rejoindre une partie
--> Terminer Les roles
--> Terminer le cahier des charges
--> Bien documenter le code
+> [!NOTE]
+> GarooBot fonctionne probablement aussi avec les version plus récentes de Python et de ces librairies.

@@ -5,6 +5,7 @@ class Player:
     def __init__(self, id: int):
         self.id = id
         self.is_alive = True
+        self.is_mayor = False
 
 
 class Role:

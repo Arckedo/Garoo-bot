@@ -38,6 +38,14 @@ class Game:
 
         self.alive_notif = self.alive_sort()
 
+    def get_players(self) -> list[Player]:
+        """
+        Retourne la liste des joueurs.
+        """
+        players = []
+        for role in self.role_list:
+            players.extend(role.lst_player)
+        return players
 
     def role_list_creation(self):
         """
@@ -107,16 +115,15 @@ class Game:
                     if role_class == type(role):
                         role.player_list.append(Player(id=player_id, is_alive=True))
 
-        for role in self.role_list:
-            for player in role.lst_player:
-                embed = GarooEmbed(
-                    title=f"**{role}**",
-                    description=role.description,
-                    color=Colour.gold(),
-                    thumbnail={"url": role.image},
-                )
-                dest = self.client.get_user(player.id)
-                self.client.send(embed=embed, dest=dest)
+        for player in self.get_players():
+            embed = GarooEmbed(
+                title=f"**{role}**",
+                description=role.description,
+                color=Colour.gold(),
+                thumbnail={"url": role.image},
+            )
+            dest = self.client.get_user(player.id)
+            self.client.send(embed=embed, dest=dest)
 
     def game_loop(self):
         """
@@ -218,19 +225,18 @@ class Game:
             ]
 
             if len(max_keys) == 1:
-                for role in self.role_list:
-                    for player in role.lst_player:
-                        if player.id == max_keys[0]:
-                            player.is_mayor = True
+                for player in self.get_players():
+                    if player.id == max_keys[0]:
+                        player.is_mayor = True
 
-                            embed = GarooEmbed(
-                                title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
-                                description=f"Le Maire est {self.mention(player.id)} !",
-                                colour=Colour.green(),
-                            )
-                            self.client.send(embed=embed)
-                            stop = True
-                            self.mayor_id = player.id
+                        embed = GarooEmbed(
+                            title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
+                            description=f"Le Maire est {self.mention(player.id)} !",
+                            colour=Colour.green(),
+                        )
+                        self.client.send(embed=embed)
+                        stop = True
+                        self.mayor_id = player.id
             else:
                 embed = GarooEmbed(
                     title="⚖️ __Le Choix du maire de Thiercelieux__ ⚖️",
@@ -268,7 +274,7 @@ class Game:
         la nuit, lance le processus de vote pour élire un nouveau maire.
         """
 
-        death = self.alive_notification()[0]
+        death = self.alive_notification()
 
         self.game_embed(
             title=f"🌅 __Jour {self.turn_count}__ 🌅",
@@ -325,18 +331,17 @@ class Game:
         ]
 
         if len(max_keys) == 1:
-            for role in self.role_list:
-                for player in role.lst_player:
-                    if player.id == max_keys[0]:
-                        player.is_alive = False
-                        self.alive_notification()
-                        self.game_embed(
-                            title=f"🔥 __{self.name(player.id)} est brulée sur la place de thercelieux!__ 🔥",
-                            description=f"Son role était {role} !",
-                        )
-                        if player.id == self.mayor_id:
-                            self.game_embed(title=f"👑 __Le maire est mort__ 👑")
-                        self.mayor_vote()
+            for player in self.get_players():
+                if player.id == max_keys[0]:
+                    player.is_alive = False
+                    self.alive_notification()
+                    self.game_embed(
+                        title=f"🔥 __{self.name(player.id)} est brulée sur la place de thercelieux!__ 🔥",
+                        description=f"Son role était {role} !",
+                    )
+                    if player.id == self.mayor_id:
+                        self.game_embed(title=f"👑 __Le maire est mort__ 👑")
+                    self.mayor_vote()
         else:
             interface = GarooVote(
                 entries=self.entries(max_keys), filter=[self.mayor_id]
@@ -413,10 +418,9 @@ class Game:
             list: Liste des identifiants des joueurs vivants.
         """
         lst = []
-        for role in self.role_list:
-            for player in role.lst_player:
-                if player.is_alive == True:
-                    lst.append(player.id)
+        for player in self.get_players():
+            if player.is_alive == True:
+                lst.append(player.id)
         return lst
 
     def dic_role_sort(self):
@@ -432,7 +436,7 @@ class Game:
                 dic[player.id] = str(role)
         return dic
 
-    def alive_notification(self):
+    def alive_notification(self) -> list[Player]:
         """
         Notifie les événements de décès et de résurrection des joueurs.
 
@@ -440,16 +444,13 @@ class Game:
             tuple: Une paire de listes contenant les identifiants des joueurs décédés et ressuscités.
         """
         death = []
-        resur = []
 
-        for role in self.role_list:
-            for player in role.lst_player:
-                if player.is_alive == False and player.id in self.alive_notif:
-                    death.append(player.id)
-                if player.is_alive == True and player.id not in self.alive_notif:
-                    resur.append(player.id)
+        for player in self.get_players():
+            if player.is_alive == False and player.id in self.alive_notif:
+                death.append(player.id)
+
         self.alive_notif = self.alive_sort()
-        return death, resur
+        return death
 
     def find_role(self, player_id):
         """
