@@ -5,7 +5,7 @@
 
 ## Héberger un GarooBot
 Téléchargez le fichier .zip de la dernière version de GarooBot depuis l'onglet [releases](https://github.com/Arckedo/Garoo-bot/releases/latest).\
-Décompressez-le, puis lancez l'éxécutable "garoobot.exe" situé dans le dossier "dist".
+Décompressez-le, puis lancez l'exécutable "garoobot.exe" situé dans le dossier "dist".
 
 Un invite de commande devrait s'ouvrir en affichant :
 ```
@@ -15,7 +15,7 @@ Démarrage du bot...
 
 > [!TIP]
 > Lorsque le programme s'arrête, la fenêtre se ferme.\
-> Pour débugger, lancez l'éxécutable depuis un nouvel invite de commande.
+> Pour débugger, lancez l'exécutable depuis un nouvel invite de commande.
 
 ## Jouer sur Discord
 Rejoignez tout d'abord notre [serveur discord](https://discord.gg/nvnHPMC5wj). Puis  pour commencer une partie, rendez-vous dans un des salons (de préférence le salon "jeu"), puis tapez la commande "/loupgarou". Vous pouvez préciser un nombre de joueur avec l'option "minimum_player" (entre 3 et 10).
@@ -47,7 +47,7 @@ Tout au long de cette partie, le programme principal va régulièrement faire ap
 Chaque tour de jeu est découpé en 2 périodes : le jour et la nuit. Ainsi, chaque rôle possède une fonction représentant son action pour le jour et/ou la nuit (ex. : les loups agissent la nuit, le chasseur pendant le jour). Cette fonction est appelée naïvement par le programme principal.\
 Certains évènements sont aussi gérés par la partie jeu mais sont toujours répartis selon la période (ex. : vote des joueurs le jour).
 
-Le jeu se termine tout simplement lorsque le nombre de loups-garous ou de viallegois tombe à zéro, au quel cas le camp opposé remporte la victoire.
+Le jeu se termine tout simplement lorsque le nombre de loups-garous ou de villageois tombe à zéro, au quel cas le camp opposé remporte la victoire.
 
 L'utilisation de la librairie "asyncio" de Python permet de gérer plusieurs parties de manière asynchrone si besoin.
 
